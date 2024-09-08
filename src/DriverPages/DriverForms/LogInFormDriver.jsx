@@ -85,7 +85,7 @@ const LogInFormDriver = () => {
               {errors.password && <p className="text-red-500 text-sm">{errors.password}</p>}
             </div>
             <div className="text-center">
-              <button type="submit" className="bg-[#131a4b] px-4 rounded-md text-white font-bold py-2">
+              <button type="submit" className="w-full bg-[#131a4b] px-4 rounded-md text-white font-bold py-2">
                 Log In
               </button>
             </div>
@@ -100,12 +100,12 @@ const LogInFormDriver = () => {
       </div>
 
       {/* Right Half: Background Image */}
-      <div
-        className="flex-1 bg-cover bg-center h-full flex items-center justify-center"
-        style={{ backgroundImage: `url(${backtruck})` }}
-      >
-        <h1 className="text-5xl font-bold text-white text-center">Pack It Buddy</h1>
-      </div>
+      <div className="hidden md:block flex-1 bg-cover bg-center relative" style={{ backgroundImage: `url(${backtruck})` }}>
+          <div className="absolute inset-0 bg-opacity-40"></div>
+            <div className="absolute inset-0 flex items-center justify-center text-white text-center">
+              <h1 className="text-4xl font-bold">PackItBuddy</h1>
+            </div>
+        </div>
     </div>
   );
 };

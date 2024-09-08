@@ -104,17 +104,17 @@ const HomeNav = () => {
       <span onClick={toggleServices}>Services <FaChevronDown className={`inline ml-2 transition-transform ${showServices ? 'rotate-180' : ''}`} /></span>
       {showServices && (
         <ul className="flex flex-col items-start bg-white w-full mt-2">
-          <li className="px-4 py-2 hover:bg-gray-100 border-b border-gray-300 w-full text-left ml-1">Local Moving</li>
+          <li className="px-4 py-2 hover:bg-gray-100 border-b border-gray-300 w-full text-left ml-1"><Link to='/LocalMove'>Local Moving</Link> </li>
           <li className="px-4 py-2 hover:bg-gray-100 border-b border-gray-300 w-full text-left ml-1">
             <Link to="/BusinessMove">Business Move</Link>
           </li>
-          <li className="px-4 py-2 hover:bg-gray-100 w-full text-left ml-1">Packing Services</li>
+          <li className="px-4 py-2 hover:bg-gray-100 w-full text-left ml-1"><Link to='/PackingService'>Packing Services</Link></li>
         </ul>
       )}
     </li>
 
     {/* About Link in Mobile */}
-    <li className="px-4 hover:text-[#131a4b] cursor-pointer capitalize py-2 text-lg mr-10">
+    <li className="px-4 hover:text-[#131a4b] cursor-pointer capitalize py-2 text-lg mr-11">
       <Link onClick={toggleNav} to="/About">About</Link>
     </li>
 
@@ -130,7 +130,7 @@ const HomeNav = () => {
     </li>
 
     <label className="w-full">
-      <Link className="bg-[#131a4b] font-bold px-4 py-2 rounded-md text-white w-auto" to="/SignUpFormClient">
+      <Link className="bg-[#131a4b] font-bold px-4 py-2 rounded-md text-white w-auto mr-6" to="/SignUpFormClient">
         Sign In
       </Link>
     </label>
