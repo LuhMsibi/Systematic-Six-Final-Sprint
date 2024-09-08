@@ -77,7 +77,7 @@ const Home = () => {
       >
         <div className="inset-0 flex flex-col items-center justify-center text-white h-full">
           <h1 className='mt-10 text-4xl lg:text-5xl'>
-            Local & Long Distance Moving
+            <strong> Local & Long Distance Moving</strong>
           </h1>
           <p className='text-white py-10 text-center text-lg'>
             Professional removal services from packing to unpacking

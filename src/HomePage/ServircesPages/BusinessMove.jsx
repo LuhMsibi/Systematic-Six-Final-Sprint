@@ -20,7 +20,7 @@ function BusinessMove() {
         <div className="relative bg-cover bg-center h-64 w-full"style={{ backgroundImage: `url(${backtruck})` }}>
             <div className="inset-0 flex flex-col items-center justify-center text-white  h-full">
             <h1 className='mt-10 text-4xl lg:text-5xl'>
-                Business Move
+                <strong> Business Move</strong>
             </h1>
             </div>
         </div>

@@ -48,7 +48,7 @@ const HomeNav = () => {
             Services <FaChevronDown className={`inline ml-2 transition-transform ${showServices ? 'rotate-180' : ''}`} />
           </Link>
           <ul className={`absolute left-0 top-full w-48 bg-white text-gray-700 ${showServices ? 'block' : 'hidden'} z-50`}>
-            <li className="px-4 py-2 hover:bg-gray-100 border-b border-gray-300 cursor-pointer">Local Moving</li>
+            <li className="px-4 py-2 hover:bg-gray-100 border-b border-gray-300 cursor-pointer"><Link to='/LocalMove'>Local Moving</Link> </li>
             <li className="px-4 py-2 hover:bg-gray-100 border-b border-gray-300 cursor-pointer">
               <Link to="/BusinessMove">Business Move</Link>
             </li>
