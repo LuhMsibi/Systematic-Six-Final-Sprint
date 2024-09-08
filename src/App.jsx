@@ -21,6 +21,7 @@ import DriverProfile from './DriverPages/DriverComponents/DriverProfile';
 import ClientProfile from './ClientPages/ClientComponents/ClientProfile';
 import AboutPage from './HomePage/About';
 import BusinessMove from './HomePage/ServircesPages/BusinessMove';
+import PackingServices from './HomePage/ServircesPages/PackingServices';
 
 function App() {
 
@@ -49,6 +50,7 @@ function App() {
         <Route path='/ClientProfile' element={<ClientProfile />} />
         <Route path='/About' element={<AboutPage />} />
         <Route path='BusinessMove' element={<BusinessMove/>} />
+        <Route path='PackingService' element={<PackingServices />} />
         
       </Routes>
 

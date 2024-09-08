@@ -19,7 +19,7 @@ function BusinessMove() {
 
         <div className="relative bg-cover bg-center h-64 w-full"style={{ backgroundImage: `url(${backtruck})` }}>
             <div className="inset-0 flex flex-col items-center justify-center text-white  h-full">
-            <h1 className='mt-10 text-5xl'>
+            <h1 className='mt-10 text-4xl lg:text-5xl'>
                 Business Move
             </h1>
             </div>
@@ -31,7 +31,7 @@ function BusinessMove() {
                 <h2 className='uppercase py-2 text-[#131a4b] font-medium'>
                     Office Move Specialist
                 </h2>
-                <h1 className='text-4xl py-2'>
+                <h1 className='text-3xl lg:text-4xl py-2'>
                     Professional Business & Office Moving
                 </h1>
                 
@@ -79,7 +79,7 @@ function BusinessMove() {
         <section className='text-center'>
             <div className='bg-gray-50 py-10'>
                 
-                <h1 className='text-4xl py-2'>
+                <h1 className='text-3xl lg:text-4xl py-2'>
                     Industries We Serve
                 </h1>
                 <h2 className='uppercase py-2'>

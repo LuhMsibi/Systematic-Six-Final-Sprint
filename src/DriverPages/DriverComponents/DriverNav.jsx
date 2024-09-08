@@ -89,7 +89,7 @@ const DriverNav = () => {
             </div>
 
             <div
-                className={`fixed top-0 left-0 w-[65%] h-full bg-[#131a4b] text-white transition-transform transform ${
+                className={`fixed top-0 left-0 w-[65%] h-full bg-[#131a4b] text-white transition-transform transform z-50 ${
                     nav ? 'translate-x-0' : '-translate-x-full'
                 }`}
                 aria-label="Mobile navigation menu"
