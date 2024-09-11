@@ -127,11 +127,11 @@ const ClientHome = () => {
             ></div>
           </div>
 
-          <div className="bg-gray-200 rounded-lg md:ml-auto w-full mt-10 md:mt-0 relative z-10 shadow-md">
+          <div className=" rounded-lg md:ml-auto w-full mt-10 md:mt-0 relative z-10 shadow-md">
             <div className="justify-items-center mx-auto" name="container">
               <div className="form">
                 <input
-                  className="input-location w-full border-2 border-gray-100 rounded-xl p-4 mt-1 bg-transparent"
+                  className="input-location w-full border-2 border-gray-100 rounded-xl p-4 mt-1"
                   type="text"
                   placeholder="Source Location"
                   id="source"
@@ -140,7 +140,7 @@ const ClientHome = () => {
 
               <div className="form">
                 <input
-                  className="input-location w-full border-2 border-gray-100 rounded-xl p-4 mt-1 bg-transparent"
+                  className="input-location w-full border-2 border-gray-100 rounded-xl p-4 mt-1 "
                   type="text"
                   placeholder="Destination"
                   id="destination"
@@ -171,7 +171,7 @@ const ClientHome = () => {
 
        {/* Modal for displaying price and distance */}
        {modalIsOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center mb-40">
           <div className="bg-white p-6 rounded-lg shadow-lg w-80">
             <h2 className="text-xl font-semibold mb-4">Price and Distance</h2>
             <p className="text-lg mb-4">Price: R{price}</p>

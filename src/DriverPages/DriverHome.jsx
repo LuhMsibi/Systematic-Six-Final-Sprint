@@ -10,21 +10,25 @@ const DriverHome = () => {
   const [rideAccepted, setRideAccepted] = useState(false);
 
   useEffect(() => {
-    // Fetch the most recent ride details from localStorage
-    const tripHistory = JSON.parse(localStorage.getItem('rideHistory')) || [];
-    if (tripHistory.length > 0) {
-      const latestTrip = tripHistory[tripHistory.length - 1]; // Get the most recent trip
-      const totalPrice = localStorage.getItem('totalPrice'); // Retrieve the total price
-      const movingDate = localStorage.getItem('movingDate'); // Retrieve the moving date
-
-      if (totalPrice) {
-        latestTrip.price = totalPrice; // Ensure the price matches the one from GetQuote
+    // Fetch ride details from Firestore
+    const fetchRideDetails = async () => {
+      try {
+        const rideRequestsSnapshot = await db.collection('rideRequests').get();
+        if (!rideRequestsSnapshot.empty) {
+          const firstRideDoc = rideRequestsSnapshot.docs[0];
+          const firstRide = firstRideDoc.data();
+          firstRide.id = firstRideDoc.id;  // Store document ID for future reference
+          setRideDetails(firstRide);  // Assuming setRideDetails updates your state
+          console.log('Ride details fetched:', firstRide);
+        } else {
+          console.log('No ride requests found');
+          setRideDetails(null);
+        }
+      } catch (error) {
+        console.error('Error fetching ride details:', error);
       }
-      if (movingDate) {
-        latestTrip.movingDate = movingDate; // Set the moving date from localStorage
-      }
-      setRideDetails(latestTrip);
-    }
+    };
+    fetchRideDetails();
 
     const initMap = () => {
       const johannesburg = { lat: -26.2033, lng: 28.0473 };
@@ -72,39 +76,48 @@ const DriverHome = () => {
     navigate('/');
   };
 
-  const handleAcceptRide = () => {
+  const handleAcceptRide = async () => {
     if (!rideDetails) {
       console.error('No ride details available');
       return;
     }
-
+  
     // Redirect to Google Maps directions
     const directionsUrl = `https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent(rideDetails.source)}&destination=${encodeURIComponent(rideDetails.destination)}`;
     window.location.href = directionsUrl;
-
+  
     setRideAccepted(true);
-
+  
     // Save accepted ride to Firestore
     const user = auth.currentUser;
     if (user) {
       const userRef = db.collection('users').doc(user.uid);
-
-      userRef.update({
-        tripHistory: firebase.firestore.FieldValue.arrayUnion(rideDetails)
-      }).then(() => {
+  
+      try {
+        // Add ride details to user's trip history
+        await userRef.update({
+          tripHistory: firebase.firestore.FieldValue.arrayUnion(rideDetails)
+        });
         console.log("Ride details added to user's trip history in Firestore");
-      }).catch(error => {
-        console.error("Error adding ride details to Firestore: ", error);
-      });
+  
+        // Remove ride request from Firestore
+        const rideRequestRef = db.collection('rideRequests').doc(rideDetails.id);
+        await rideRequestRef.delete();
+        console.log("Ride request removed from Firestore");
+        
+      } catch (error) {
+        console.error("Error handling ride details in Firestore: ", error);
+      }
     }
-
+  
     // Save accepted ride to localStorage
     const acceptedRides = JSON.parse(localStorage.getItem('acceptedRides')) || [];
     acceptedRides.push(rideDetails);
     localStorage.setItem('acceptedRides', JSON.stringify(acceptedRides));
-
+  
     localStorage.removeItem('rideHistory');
   };
+  
 
   return (
     <div className='bg-gray-50'>
