@@ -7,7 +7,7 @@ import 'firebase/firestore'; // Firestore for Firebase v8
 
 const GetQuote = () => {
   const [formData, setFormData] = useState({
-    consignmentType: 'Few items',
+    weight: 0,
     fullName: '',
     email: '',
     phone: '',
@@ -17,23 +17,28 @@ const GetQuote = () => {
   const [totalPrice, setTotalPrice] = useState(250);
   const navigate = useNavigate();
 
-  const consignmentPrices = {
-    'Few items': 250,
-    '1bed': 500,
-    '2bed': 750,
-    '3bed': 1000,
-    '4bed': 1250,
-    'Office': 1500
+  const weightPrices = {
+    '0-50': 250,
+    '51-200': 500,
+    '201-400': 750,
+    '401-600': 1000,
+    '601-800': 1250,
+    '801+': 1500
   };
 
   const distancePrice = parseFloat(localStorage.getItem('distancePrice')) || 0;
 
   useEffect(() => {
     updateTotalPrice();
-  }, [formData.consignmentType]);
+  }, [formData.weight]);
 
   const updateTotalPrice = () => {
-    const consignmentPrice = consignmentPrices[formData.consignmentType] || 0;
+    let weightRange = Object.keys(weightPrices).find(range => {
+      const [min, max] = range.split('-').map(Number);
+      return formData.weight >= min && (formData.weight <= max || max === undefined);
+    });
+
+    const consignmentPrice = weightPrices[weightRange] || 0;
     const totalPrice = consignmentPrice + distancePrice;
     setTotalPrice(totalPrice.toFixed(2));
   };
@@ -62,7 +67,7 @@ const GetQuote = () => {
           fullName: formData.fullName,
           email: formData.email,
           phone: formData.phone,
-          consignmentType: formData.consignmentType
+          weight: formData.weight
         };
 
         // Add the ride request to Firestore
@@ -99,21 +104,16 @@ const GetQuote = () => {
 
           <form id="quote-form" onSubmit={handleSubmit}>
             <div className="mb-4">
-              <label htmlFor="consignment-type" className="block mb-2 font-medium">Consignment Type</label>
-              <select
-                id="consignment-type"
-                name="consignmentType"
-                value={formData.consignmentType}
+              <label htmlFor="weight" className="block mb-2 font-medium">Weight of Consignment (kg)</label>
+              <input
+                type="number"
+                id="weight"
+                name="weight"
+                placeholder="Enter total weight"
+                value={formData.weight}
                 onChange={handleChange}
                 className="w-full p-2 border border-gray-300 rounded-md text-base focus:border-black focus:outline-none"
-              >
-                <option className="option" value="Few items">Just few items</option>
-                <option className="option" value="1bed">1 Bedroom</option>
-                <option className="option" value="2bed">2 Bedroom</option>
-                <option className="option" value="3bed">3 Bedroom</option>
-                <option className="option" value="4bed">4+ Bedroom</option>
-                <option className="option" value="Office">Office Move</option>
-              </select>
+              />
             </div>
             <div className="mb-4">
               <label htmlFor="full-name" className="block mb-2 font-medium">Full Name</label>
@@ -169,7 +169,7 @@ const GetQuote = () => {
         </div>
       </main>
     </div>
-  )
-}
+  );
+};
 
 export default GetQuote;
