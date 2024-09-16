@@ -3,10 +3,11 @@ import { FaBars, FaTimes } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 import PackitByddyLogo from '../ClientAssets/OurLogo.png';
 import { auth, db } from '../../../firebase'; // Make sure to import Firebase auth and db
+import Profile from '../ClientAssets/profileIcon.jpg';
 
 const ClientNav = () => {
     const [nav, setNav] = useState(false);
-    const [profilePic, setProfilePic] = useState('path/to/default-profile-pic.jpg'); // Default profile picture path
+    const [profilePic, setProfilePic] = useState(Profile); // Default profile picture path
 
     useEffect(() => {
         // Fetch the profile picture from Firestore if the user is logged in
