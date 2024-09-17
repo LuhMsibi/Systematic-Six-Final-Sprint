@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import { auth, db } from '../../../firebase'; // Ensure you've imported Firebase auth and db
 import DriverNav from './DriverNav';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const DriverProfile = () => {
     const [name, setName] = useState("");
@@ -9,38 +10,61 @@ const DriverProfile = () => {
     const [phone, setPhone] = useState("");
     const [password, setPassword] = useState("");
     const [profilePicture, setProfilePicture] = useState(null);
+    const [userId, setUserId] = useState(null); // Track the driver's UID
+    const navigate = useNavigate();
 
-    // Load driver profile from localStorage
+    // Fetch profile data from Firestore on component mount
     useEffect(() => {
-        const storedDriverProfile = JSON.parse(localStorage.getItem('driverProfile'));
-        if (storedDriverProfile) {
-            setName(storedDriverProfile.name);
-            setSurname(storedDriverProfile.surname);
-            setEmail(storedDriverProfile.email);
-            setPhone(storedDriverProfile.phone);
-            setProfilePicture(storedDriverProfile.profilePicture);
+        const currentUser = auth.currentUser;
+
+        if (currentUser) {
+            const uid = currentUser.uid;
+            setUserId(uid);
+            db.collection('driversDetails').doc(uid).get()
+                .then((doc) => {
+                    if (doc.exists) {
+                        const profileData = doc.data();
+                        setName(profileData.names || "");
+                        setSurname(profileData.surname || "");
+                        setEmail(profileData.email || "");
+                        setPhone(profileData.phone || "");
+                        setProfilePicture(profileData.profilePicture || null);
+                    } else {
+                        console.log("No such document!");
+                    }
+                })
+                .catch((error) => {
+                    console.error("Error fetching profile data: ", error);
+                });
+        } else {
+            // If driver is not authenticated, redirect to login
+            navigate('/LoginFormDriver');
         }
-    }, []);
+    }, [navigate]);
 
+    // Save updated profile data to Firestore
     const handleSaveChanges = () => {
-        const driverProfile = {
-            name,
-            surname,
-            email,
-            phone,
-            profilePicture,
-        };
-        localStorage.setItem('driverProfile', JSON.stringify(driverProfile));
-        localStorage.setItem('profilePic', profilePicture); // Save profile picture for the nav
-        alert("Driver profile updated successfully!");
+        if (userId) {
+            const profileData = {
+                names: name,
+                surname: surname,
+                email: email,
+                phone: phone,
+                profilePicture
+            };
+
+            db.collection('driversDetails').doc(userId).update(profileData)
+                .then(() => {
+                    alert("Profile updated successfully!");
+                })
+                .catch((error) => {
+                    console.error("Error updating profile: ", error);
+                    alert("There was an error updating your profile. Please try again.");
+                });
+        }
     };
 
-    const handleDeleteAccount = () => {
-        localStorage.removeItem('driverProfile');
-        localStorage.removeItem('profilePic'); // Remove profile picture from nav
-        alert("Driver account deleted successfully!");
-    };
-
+    // Handle profile picture file change
     const handleProfilePictureChange = (e) => {
         const file = e.target.files[0];
         if (file) {
@@ -53,9 +77,9 @@ const DriverProfile = () => {
     };
 
     return (
-        <div className="">
+        <div>
             <DriverNav />
-            <h2 className="text-3xl font-bold mb-6 mt-4 text-center text-[#131a4b] ">Driver Profile</h2>
+            <h2 className="text-3xl font-bold mb-6 mt-4 text-center text-[#131a4b]">Driver Profile</h2>
 
             <div className="max-w-xl mx-auto bg-white p-8 rounded-lg shadow-md">
                 <div className="flex items-center justify-center mb-6">
@@ -144,7 +168,7 @@ const DriverProfile = () => {
                 <div className="flex justify-between">
                     <button 
                         className="bg-red-500 text-white px-4 py-2 rounded"
-                        onClick={handleDeleteAccount}
+                        onClick={() => alert("Delete account functionality coming soon!")}
                     >
                         Delete Account
                     </button>
@@ -155,10 +179,11 @@ const DriverProfile = () => {
                         Save Changes
                     </button>
                 </div>
+
                 <div className='text-center'>
-                    <label className=' text-[#131a4b] font-bold text-xl'>
-                    <Link to ='/'>
-                        Log Out
+                    <label className='text-[#131a4b] font-bold text-xl'>
+                        <Link to='/'>
+                            Log Out
                         </Link>
                     </label>
                 </div>

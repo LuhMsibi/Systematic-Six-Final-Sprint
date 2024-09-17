@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import { auth, db } from '../../../firebase'; // Ensure you've imported Firebase auth and db
 import ClientNav from './ClientNav';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const ClientProfile = () => {
     const [name, setName] = useState("");
@@ -9,45 +10,61 @@ const ClientProfile = () => {
     const [phone, setPhone] = useState("");
     const [password, setPassword] = useState("");
     const [profilePicture, setProfilePicture] = useState(null);
+    const [userId, setUserId] = useState(null); // Track the user's UID
+    const navigate = useNavigate();
 
-    // Load initial profile data from localStorage if available
+    // Fetch profile data from Firestore on component mount
     useEffect(() => {
-        const savedProfile = localStorage.getItem('clientProfile');
-        if (savedProfile) {
-            const profileData = JSON.parse(savedProfile);
-            setName(profileData.name || "");
-            setSurname(profileData.surname || "");
-            setEmail(profileData.email || "");
-            setPhone(profileData.phone || "");
-            setProfilePicture(profileData.profilePicture || null);
+        const currentUser = auth.currentUser;
+
+        if (currentUser) {
+            const uid = currentUser.uid;
+            setUserId(uid);
+            db.collection('users').doc(uid).get()
+                .then((doc) => {
+                    if (doc.exists) {
+                        const profileData = doc.data();
+                        setName(profileData.names || "");
+                        setSurname(profileData.surname || ""); // Update Firestore to include surname if necessary
+                        setEmail(profileData.email || "");
+                        setPhone(profileData.phone || "");
+                        setProfilePicture(profileData.profilePicture || null); // Make sure you store profile picture in Firestore
+                    } else {
+                        console.log("No such document!");
+                    }
+                })
+                .catch((error) => {
+                    console.error("Error fetching profile data: ", error);
+                });
+        } else {
+            // If user is not authenticated, redirect to login
+            navigate('/LoginFormClient');
         }
-    }, []);
+    }, [navigate]);
 
+    // Save updated profile data to Firestore
     const handleSaveChanges = () => {
-        const profileData = {
-            name,
-            surname,
-            email,
-            phone,
-            profilePicture
-        };
-        localStorage.setItem('clientProfile', JSON.stringify(profileData));
-        localStorage.setItem('clientProfilePic', profilePicture); // Save profile picture
-        alert("Profile updated successfully!");
-    };
-        
-    const handleDeleteAccount = () => {
-        localStorage.removeItem('clientProfile');
-        localStorage.removeItem('clientProfilePic'); // Remove profile picture
-        alert("Account deleted successfully!");
-        // Reset form fields
-        setName("");
-        setSurname("");
-        setEmail("");
-        setPhone("");
-        setProfilePicture(null);
+        if (userId) {
+            const profileData = {
+                names: name,
+                surname: surname,
+                email: email,
+                phone: phone,
+                profilePicture
+            };
+
+            db.collection('users').doc(userId).update(profileData)
+                .then(() => {
+                    alert("Profile updated successfully!");
+                })
+                .catch((error) => {
+                    console.error("Error updating profile: ", error);
+                    alert("There was an error updating your profile. Please try again.");
+                });
+        }
     };
 
+    // Handle profile picture file change
     const handleProfilePictureChange = (e) => {
         const file = e.target.files[0];
         if (file) {
@@ -60,7 +77,7 @@ const ClientProfile = () => {
     };
 
     return (
-        <div className="">
+        <div>
             <ClientNav />
             <h2 className="text-3xl font-bold mb-6 mt-4 text-center text-[#131a4b]">Client Profile</h2>
             
@@ -151,7 +168,7 @@ const ClientProfile = () => {
                 <div className="flex justify-between">
                     <button 
                         className="bg-red-500 text-white px-4 py-2 rounded"
-                        onClick={handleDeleteAccount}
+                        onClick={() => alert("Delete account functionality coming soon!")}
                     >
                         Delete Account
                     </button>
@@ -162,10 +179,11 @@ const ClientProfile = () => {
                         Save Changes
                     </button>
                 </div>
+
                 <div className='text-center'>
-                    <label className=' text-[#131a4b] font-bold text-xl'>
-                    <Link to ='/'>
-                        Log Out
+                    <label className='text-[#131a4b] font-bold text-xl'>
+                        <Link to='/'>
+                            Log Out
                         </Link>
                     </label>
                 </div>
