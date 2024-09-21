@@ -79,7 +79,7 @@ const GetQuote = () => {
         localStorage.setItem('totalPrice', totalPrice);
 
         // Navigate to PaymentSide
-        navigate('/PaymentSide');
+        navigate('/Paynow');
       } catch (error) {
         console.error('Error adding document: ', error);
       }
