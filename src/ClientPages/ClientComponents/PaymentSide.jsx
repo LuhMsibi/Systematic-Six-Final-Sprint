@@ -47,7 +47,7 @@ const PaymentSide = () => {
         <h2 className='text-lg font-semibold mb-2'>Payment Details</h2>
         <div className='mb-4 flex'>
           <BsCashCoin className='text-green-600' />
-          <p className='px-2'>Cash</p>
+          <p className='px-2'>Card</p>
         </div>
         {distance !== null ? (
           <div>

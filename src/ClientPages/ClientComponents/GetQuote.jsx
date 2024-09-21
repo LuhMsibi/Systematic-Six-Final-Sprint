@@ -39,7 +39,8 @@ const GetQuote = () => {
     });
 
     const consignmentPrice = weightPrices[weightRange] || 0;
-    const totalPrice = consignmentPrice + distancePrice;
+    const ourprof = 6;
+    const totalPrice = consignmentPrice + distancePrice + ourprof;
     setTotalPrice(totalPrice.toFixed(2));
   };
 

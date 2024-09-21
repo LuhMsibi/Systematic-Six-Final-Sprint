@@ -77,9 +77,6 @@ const DriverNav = () => {
                         <Link to="/DriverHistory" onClick={toggleNav}>Trip History</Link>
                     </li>
                     <li className="py-2">
-                        <Link to="/DriverDeals" onClick={toggleNav}>Deals</Link>
-                    </li>
-                    <li className="py-2">
                         <Link to="/DriverSupport" onClick={toggleNav}>Support</Link>
                     </li>
                     <li className="py-2">

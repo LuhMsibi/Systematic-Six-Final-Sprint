@@ -117,7 +117,7 @@ const DriverHome = () => {
   
     localStorage.removeItem('rideHistory');
   };
-  
+  const ourmoney = rideDetails ? (0.15 * rideDetails.price).toFixed(2) : 0;
 
   return (
     <div className='bg-gray-50'>
@@ -125,7 +125,7 @@ const DriverHome = () => {
       <div className='px-4 py-2'>
         {/* Optional logout button */}
       </div>
-
+  
       <main className="flex flex-col items-center min-h-screen p-5 w-screen">
         <div id="map" className="h-64 w-full rounded-lg overflow-hidden shadow-sm mb-2"></div>
         <div className="bg-gray-50 rounded-lg shadow-lg p-6 w-full max-w-lg z-10">
@@ -136,7 +136,8 @@ const DriverHome = () => {
             <p className="text-lg font-semibold">No Rides Requested</p>
           ) : rideDetails ? (
             <>
-              <div className="text-2xl font-bold mb-2">R{rideDetails.price}</div>
+              <div className="text-2xl font-bold mb-2">R{rideDetails.price - ourmoney} </div>
+              <div >- 15%: R{rideDetails.price}</div>
               <div className="text-gray-600 mb-2">★ 4.75</div>
               <div className="text-gray-600 mb-2">Moving Date: {rideDetails.movingDate || 'N/A'}</div>
               <div className="text-gray-700 mb-2">
@@ -166,6 +167,7 @@ const DriverHome = () => {
       </main>
     </div>
   );
+  
 };
 
 export default DriverHome;
