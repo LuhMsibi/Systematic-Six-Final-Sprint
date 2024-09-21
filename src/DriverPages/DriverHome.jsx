@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import DriverNav from './DriverComponents/DriverNav';
-import { useNavigate } from 'react-router-dom';
-import { RiLogoutCircleRLine } from "react-icons/ri";
 import { auth, db } from '../../firebase'; // Import Firestore and authentication
 import firebase from 'firebase/app'; // Import firebase if not already
 
@@ -67,14 +65,6 @@ const DriverHome = () => {
       script.onload = initMap;
     }
   }, []);
-
-  const navigate = useNavigate();
-
-  const handleLogout = () => {
-    localStorage.removeItem('user');
-    sessionStorage.removeItem('userSession');
-    navigate('/');
-  };
 
   const handleAcceptRide = async () => {
     if (!rideDetails) {
