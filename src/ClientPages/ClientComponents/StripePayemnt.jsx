@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { loadStripe } from '@stripe/stripe-js';
 import { Elements, CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
-import './Payment.css';
 import { useNavigate } from 'react-router-dom';
 
 const stripePromise = loadStripe('pk_test_51PAL9I09idQbuC9sxMCgf5Q2jxCpdQP288JpBwxo7WQEoMjoCgW8SZLV5Yz7zfGDpr7RL4L8HH9NDoCnkUsAeNij00d6wMXJPB'); // Replace with your publishable key
@@ -49,16 +48,29 @@ function PaymentSide() { // Corrected function name to avoid repetition
     };
 
     return (
-        <div className='payment-card'>
-        <h2 className="payment-header">Payment Details</h2>
-
-            <form onSubmit={handleSubmit}>
-                <CardElement />
-                <button className='payment-button' type="submit" disabled={!stripe}>
-                    Pay Now
-                </button>
-            </form>
+<div className='flex justify-center items-center h-screen'>
+    <div className='bg-slate-50 h-64 w-96 shadow-md py-2 rounded'>
+        <h2 className="font-bold px-2 p-4">Payment Details</h2>
+        <div className='flex justify-between px-4'>
+            <label className='text-sm'>
+                Enter details
+            </label>
+            <label className='text-sm ml-44'>
+                Date
+            </label>
+            <label className='text-sm'>
+                Enter CVV
+            </label>
         </div>
+        <form onSubmit={handleSubmit}>
+            <CardElement className='p-4'/>
+            <button className='bg-[#005bb5] px-40 py-2 rounded-md text-white' type="submit" disabled={!stripe}>
+                Pay Now
+            </button>
+        </form>
+    </div>
+</div>
+
     );
 }
 
