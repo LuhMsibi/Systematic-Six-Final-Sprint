@@ -10,29 +10,38 @@ const PaymentSide = () => {
   const [distance, setDistance] = useState(null);
   const [driverLocation, setDriverLocation] = useState(null);
   const mapRef = useRef(null);
-
-  // Socket connection
-  useEffect(() => {
-    const socket = io('https://your-backend-server.com');
-    socket.on('driverLocation', (location) => {
-      setDriverLocation(location);
-      if (mapRef.current) {
-        mapRef.current.panTo(location);
-      }
-    });
-    return () => socket.disconnect();
-  }, []);
-
-  useEffect(() => {
-    // Retrieve the distance from local storage
-    const storedDistance = JSON.parse(localStorage.getItem('rideRequest'))?.distance;
-    // Convert the distance to a number if it's a string
-    setDistance(storedDistance ? Number(storedDistance) : null);
-  }, []);
-
+  const socketRef = useRef(null); // Ref to handle the socket connection
+  
   const { isLoaded } = useLoadScript({
     googleMapsApiKey: 'YOUR_GOOGLE_MAPS_API_KEY'
   });
+
+  // Retrieve distance from local storage
+  useEffect(() => {
+    const storedDistance = JSON.parse(localStorage.getItem('rideRequest'))?.distance;
+    setDistance(storedDistance ? Number(storedDistance) : null);
+  }, []);
+
+  // Setup socket connection after map is loaded
+  useEffect(() => {
+    if (isLoaded) {
+      socketRef.current = io('https://your-backend-server.com');
+
+      socketRef.current.on('driverLocation', (location) => {
+        setDriverLocation(location);
+        if (mapRef.current) {
+          mapRef.current.panTo(location);
+        }
+      });
+
+      // Clean up the socket connection when the component unmounts
+      return () => {
+        if (socketRef.current) {
+          socketRef.current.disconnect();
+        }
+      };
+    }
+  }, [isLoaded]);
 
   if (!isLoaded) return <div>Loading...</div>;
 
@@ -69,7 +78,7 @@ const PaymentSide = () => {
         </GoogleMap>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default PaymentSide
+export default PaymentSide;
