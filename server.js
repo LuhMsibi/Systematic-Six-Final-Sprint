@@ -15,7 +15,7 @@ app.post('/create-payment-intent', async (req, res) => {
   try {
     const paymentIntent = await stripe.paymentIntents.create({
       amount: totalPrice * 100, // Stripe works in the smallest unit of the currency (e.g., cents)
-      currency: 'usd',
+      currency: 'zar',
     });
 
     res.send({
