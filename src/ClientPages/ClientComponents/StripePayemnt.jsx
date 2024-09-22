@@ -88,7 +88,8 @@ function PaymentSide() {
                 localStorage.removeItem('destination');
 
                 // Navigate to success page
-                navigate('/PaymentSide');
+                navigate('/PaymentSide', { replace: true });
+
             } catch (error) {
                 console.error('Error adding quote details to Firestore:', error);
             }
