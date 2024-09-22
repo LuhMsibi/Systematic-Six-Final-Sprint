@@ -55,34 +55,17 @@ const GetQuote = () => {
     e.preventDefault();
     if (isFormComplete()) {
       try {
-        // Firestore collection reference
-        const rideRequestRef = db.collection('rideRequests');
-        
-        // Create ride request object from form data and localStorage
-        const rideRequest = {
-          source: localStorage.getItem('source'), // Retrieve source location
-          destination: localStorage.getItem('destination'), // Retrieve destination location
-          price: totalPrice,
-          distance: localStorage.getItem('distance'), // Retrieve distance
-          movingDate: formData.movingDate, // From formData
-          fullName: formData.fullName,
-          email: formData.email,
-          phone: formData.phone,
-          weight: formData.weight
-        };
-
-        // Add the ride request to Firestore
-        const docRef = await rideRequestRef.add(rideRequest);
-        console.log('Document written with ID: ', docRef.id);
-
-        // Save important info in localStorage for use in the next page
-        localStorage.setItem('rideRequestId', docRef.id);
+        // Store form data in localStorage to be used later in the payment page
+        localStorage.setItem('formData', JSON.stringify(formData));
         localStorage.setItem('totalPrice', totalPrice);
+        localStorage.setItem('distance', localStorage.getItem('distance'));
+        localStorage.setItem('source', localStorage.getItem('source'));
+        localStorage.setItem('destination', localStorage.getItem('destination'));
 
-        // Navigate to PaymentSide
+        // Navigate to Payment page
         navigate('/Paynow');
       } catch (error) {
-        console.error('Error adding document: ', error);
+        console.error('Error storing form data: ', error);
       }
     } else {
       alert("Please fill in all the required fields.");

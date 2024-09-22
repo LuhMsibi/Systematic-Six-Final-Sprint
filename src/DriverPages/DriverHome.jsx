@@ -108,7 +108,7 @@ const DriverHome = () => {
     localStorage.removeItem('rideHistory');
   };
   const ourmoney = rideDetails ? (0.15 * rideDetails.price).toFixed(2) : 0;
-
+  const finalAmount = rideDetails ? (rideDetails.price - parseFloat(ourmoney)).toFixed(2) : 0;
   return (
     <div className='bg-gray-50'>
       <DriverNav />
@@ -126,7 +126,7 @@ const DriverHome = () => {
             <p className="text-lg font-semibold">No Rides Requested</p>
           ) : rideDetails ? (
             <>
-              <div className="text-2xl font-bold mb-2">R{rideDetails.price - ourmoney} </div>
+              <div className="text-2xl font-bold mb-2">R{finalAmount} </div>
               <div >- 15%: R{rideDetails.price}</div>
               <div className="text-gray-600 mb-2">★ 4.75</div>
               <div className="text-gray-600 mb-2">Moving Date: {rideDetails.movingDate || 'N/A'}</div>
