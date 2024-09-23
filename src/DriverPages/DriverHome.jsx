@@ -157,8 +157,8 @@ const DriverHome = () => {
               return (
                 <div
                   key={index}
-                  className={`bg-gray-50 rounded-lg shadow-lg p-6 cursor-pointer ${
-                    selectedRideId === ride.id ? 'shadow-[rgba(0,0,0,0.16)_0px_1px_4px,_rgb(51,51,51)_0px_0px_0px_3px]' : ''
+                  className={`bg-gray-50 rounded-lg  p-6 cursor-pointer ${
+                    selectedRideId === ride.id ? 'shadow-[rgba(0,0,0,0.16)_0px_1px_4px,_rgb(51,51,51)_0px_0px_0px_3px]' : 'shadow-lg'
                   }`}
                   onClick={() => handleTripClick(ride)} // Click to update the map
                 >

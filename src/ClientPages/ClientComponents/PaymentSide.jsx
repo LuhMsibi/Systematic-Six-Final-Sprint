@@ -13,7 +13,7 @@ const PaymentSide = () => {
   const socketRef = useRef(null); // Ref to handle the socket connection
   
   const { isLoaded } = useLoadScript({
-    googleMapsApiKey: 'YOUR_GOOGLE_MAPS_API_KEY'
+    googleMapsApiKey: 'AIzaSyCKqk4I-ZPHLGueUz17Xhl-oCz0MZ2YVx0'
   });
 
   // Retrieve distance from local storage
