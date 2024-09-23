@@ -7,6 +7,8 @@ const ClientHome = () => {
     const [modalIsOpen, setModalIsOpen] = useState(false);
     const [price, setPrice] = useState(null);
     const [distance, setDistance] = useState(null);
+
+  
   
     let map, directionsService, directionsRenderer;
     let sourceAutoComplete, destinationAutoComplete;

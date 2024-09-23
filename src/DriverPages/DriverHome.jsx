@@ -13,6 +13,9 @@ const DriverHome = () => {
   const [selectedRideId, setSelectedRideId] = useState(null); // Tracks which container is clicked
 
 
+
+
+
   useEffect(() => {
     // Fetch ride details from Firestore
     const fetchRideDetails = async () => {
@@ -109,37 +112,36 @@ const DriverHome = () => {
 
   // Accept a ride and save details to Firestore and localStorage
   const handleAcceptRide = async (ride) => {
-    if (!ride) {
-      console.error('No ride details available');
+    if (!ride || !ride.id) { // Check if ride is valid and has an id
+      console.error("Invalid ride or ride ID is missing:", ride);
       return;
     }
-
+  
     const directionsUrl = `https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent(ride.source)}&destination=${encodeURIComponent(ride.destination)}`;
     window.location.href = directionsUrl;
-
+  
     setRideAccepted(true);
-
-    const user = auth.currentUser;
-    if (user) {
-      const userRef = db.collection('users').doc(user.uid);
-
-      try {
-        await userRef.update({
-          tripHistory: firebase.firestore.FieldValue.arrayUnion(ride),
-        });
-
-        const rideRequestRef = db.collection('rideRequests').doc(ride.id);
-        await rideRequestRef.delete();
-
-      } catch (error) {
-        console.error("Error handling ride details in Firestore: ", error);
-      }
+  
+    try {
+      // Get the requester's user ID from the ride request
+      const requesterUserId = ride.userId; // This should work if ride.userId is set correctly
+  
+      // Update the trip history of the requester
+      const userRef = db.collection('users').doc(requesterUserId);
+      await userRef.update({
+        tripHistory: firebase.firestore.FieldValue.arrayUnion(ride),
+      });
+  
+      // Delete the ride request after it's been accepted
+      const rideRequestRef = db.collection('rideRequests').doc(ride.id);
+      await rideRequestRef.delete();
+  
+      console.log('Ride accepted and requester\'s trip history updated.');
+    } catch (error) {
+      console.error("Error handling ride details in Firestore: ", error);
     }
-
-    const acceptedRides = JSON.parse(localStorage.getItem('acceptedRides')) || [];
-    acceptedRides.push(ride);
-    localStorage.setItem('acceptedRides', JSON.stringify(acceptedRides));
   };
+  
 
   return (
     <div className='bg-gray-50'>

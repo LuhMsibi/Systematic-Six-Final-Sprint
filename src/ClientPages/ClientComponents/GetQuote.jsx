@@ -14,6 +14,8 @@ const GetQuote = () => {
     movingDate: ''
   });
 
+  
+
   const [totalPrice, setTotalPrice] = useState(250);
   const navigate = useNavigate();
 
