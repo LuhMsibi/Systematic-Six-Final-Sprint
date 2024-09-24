@@ -118,13 +118,14 @@ const DriverHome = () => {
     }
   
     const directionsUrl = `https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent(ride.source)}&destination=${encodeURIComponent(ride.destination)}`;
-    window.location.href = directionsUrl;
+    window.location.href = '#';
   
     setRideAccepted(true);
   
     try {
       // Get the requester's user ID from the ride request
-      const requesterUserId = ride.userId; // This should work if ride.userId is set correctly
+      const requesterUserId = ride.userId;
+      console.log('This is user ID>>>', requesterUserId) // This should work if ride.userId is set correctly
   
       // Update the trip history of the requester
       const userRef = db.collection('users').doc(requesterUserId);

@@ -58,6 +58,7 @@ function PaymentSide() {
             const source = localStorage.getItem('source');
             const destination = localStorage.getItem('destination');
             const user = auth.currentUser; // Get the current user
+            console.log('This is my ID>>>', user.uid);
 
             const rideRequest = {
                 source,
@@ -80,7 +81,7 @@ function PaymentSide() {
             localStorage.clear();
             localStorage.setItem('rideRequest', JSON.stringify(rideRequest));
 
-            navigate('/PaymentSide', { replace: true });
+            navigate('#', { replace: true });
         }
     };
 
