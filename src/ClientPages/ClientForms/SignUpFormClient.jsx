@@ -40,19 +40,28 @@ const SignUpFormClient = () => {
     auth.signInWithPopup(googleAuthProvider)
       .then((result) => {
         const user = result.user;
-        
-        // Create a new document in Firestore with the user's UID
-        db.collection('users').doc(user.uid).set({
-          names: user.displayName,
-          phone: '', // You may want to add a method to collect this later
-          address: '', // You may want to add a method to collect this later
-          email: user.email
-        }).then(() => {
-          console.log("User information saved to Firestore");
-          navigate('../ClientHome');
-        }).catch(error => {
-          console.error("Error adding user information to Firestore: ", error);
-          alert("There was an error saving your information. Please try again.");
+  
+        // Check if user document already exists in Firestore
+        const userRef = db.collection('users').doc(user.uid);
+        userRef.get().then((doc) => {
+          if (doc.exists) {
+            console.log("User already exists in Firestore");
+            navigate('../ClientHome');
+          } else {
+            // Create a new document in Firestore with the user's UID
+            userRef.set({
+              names: user.displayName,
+              phone: '', // You may want to add a method to collect this later
+              address: '', // You may want to add a method to collect this later
+              email: user.email
+            }).then(() => {
+              console.log("User information saved to Firestore");
+              navigate('../ClientHome');
+            }).catch(error => {
+              console.error("Error adding user information to Firestore: ", error);
+              alert("There was an error saving your information. Please try again.");
+            });
+          }
         });
       })
       .catch((error) => {
@@ -60,6 +69,7 @@ const SignUpFormClient = () => {
         alert("There was an error signing in with Google. Please try again.");
       });
   };
+  
   
 
   return (

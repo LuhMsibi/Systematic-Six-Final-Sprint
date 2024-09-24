@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ClientNav from './ClientNav';
-import { db } from '../../../firebase'; // Firebase configuration
+import { auth, db } from '../../../firebase'; // Firebase configuration
 import firebase from 'firebase/app'; // Firebase core for v8 or lower
 import 'firebase/firestore'; // Firestore for Firebase v8
 
@@ -13,6 +13,20 @@ const GetQuote = () => {
     phone: '',
     movingDate: ''
   });
+
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      if (user) {
+        console.log("Logged-in user:", user);
+        // Use setUser or other state if needed
+      } else {
+        console.log("No user is logged in.");
+      }
+    });
+  
+    // Cleanup listener on component unmount
+    return () => unsubscribe();
+  }, []);
 
   
 
