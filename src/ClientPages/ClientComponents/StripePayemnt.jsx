@@ -81,7 +81,7 @@ function PaymentSide() {
             localStorage.clear();
             localStorage.setItem('rideRequest', JSON.stringify(rideRequest));
 
-            navigate('#', { replace: true });
+            navigate('/PaymentSide', { replace: true });
         }
     };
 

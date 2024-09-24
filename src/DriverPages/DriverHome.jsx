@@ -118,7 +118,7 @@ const DriverHome = () => {
     }
   
     const directionsUrl = `https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent(ride.source)}&destination=${encodeURIComponent(ride.destination)}`;
-    window.location.href = '#';
+    window.location.href = directionsUrl;
   
     setRideAccepted(true);
   
