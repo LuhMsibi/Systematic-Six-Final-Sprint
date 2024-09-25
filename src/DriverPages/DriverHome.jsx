@@ -11,12 +11,30 @@ const DriverHome = () => {
   const [directionsService, setDirectionsService] = useState(null);
 
   const [selectedRideId, setSelectedRideId] = useState(null); // Tracks which container is clicked
+  const user = auth.currentUser; // Get the current user
+  
 
-
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      if (user) {
+        console.log("Logged-in user:", user);
+        // Use setUser or other state if needed
+        console.log('This is my ID>>>', user.uid);
+      } else {
+        console.log("No user is logged in.");
+      }
+    });
+  
+    // Cleanup listener on component unmount
+    return () => unsubscribe();
+  }, []);
 
 
 
   useEffect(() => {
+
+
+   
     // Fetch ride details from Firestore
     const fetchRideDetails = async () => {
       try {
@@ -116,9 +134,10 @@ const DriverHome = () => {
       console.error("Invalid ride or ride ID is missing:", ride);
       return;
     }
-  
-    const directionsUrl = `https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent(ride.source)}&destination=${encodeURIComponent(ride.destination)}`;
-    window.location.href = directionsUrl;
+
+
+
+    
   
     setRideAccepted(true);
   
@@ -132,15 +151,24 @@ const DriverHome = () => {
       await userRef.update({
         tripHistory: firebase.firestore.FieldValue.arrayUnion(ride),
       });
+
+
+
   
       // Delete the ride request after it's been accepted
       const rideRequestRef = db.collection('rideRequests').doc(ride.id);
       await rideRequestRef.delete();
   
       console.log('Ride accepted and requester\'s trip history updated.');
+      alert('Ride Accepted');
+
     } catch (error) {
       console.error("Error handling ride details in Firestore: ", error);
     }
+
+
+    const directionsUrl = `https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent(ride.source)}&destination=${encodeURIComponent(ride.destination)}`;
+    window.location.href = directionsUrl;
   };
   
 
