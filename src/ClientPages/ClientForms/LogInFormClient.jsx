@@ -11,6 +11,8 @@ const LogInFormClient = () => {
   const [errors, setErrors] = useState({});
   const navigate = useNavigate();
 
+  
+
   const signIn = e => {
     e.preventDefault();
     auth.signInWithEmailAndPassword(email, password)

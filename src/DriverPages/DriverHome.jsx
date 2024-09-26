@@ -3,6 +3,7 @@ import DriverNav from './DriverComponents/DriverNav';
 import { auth, db } from '../../firebase';
 import firebase from 'firebase/app';
 
+
 const DriverHome = () => {
   const [rideDetails, setRideDetails] = useState([]);
   const [rideAccepted, setRideAccepted] = useState(false);
@@ -129,47 +130,51 @@ const DriverHome = () => {
   };
 
   // Accept a ride and save details to Firestore and localStorage
-  const handleAcceptRide = async (ride) => {
-    if (!ride || !ride.id) { // Check if ride is valid and has an id
-      console.error("Invalid ride or ride ID is missing:", ride);
-      return;
-    }
+ // Accept a ride and save details to Firestore and localStorage
+const handleAcceptRide = async (ride) => {
+  if (!ride || !ride.id) { // Check if ride is valid and has an id
+    console.error("Invalid ride or ride ID is missing:", ride);
+    return;
+  }
 
+  setRideAccepted(true);
 
+  try {
+    // Get the requester's user ID from the ride request
+    const requesterUserId = ride.userId;
+    console.log('This is user ID>>>', requesterUserId); // This should work if ride.userId is set correctly
 
-    
-  
-    setRideAccepted(true);
-  
-    try {
-      // Get the requester's user ID from the ride request
-      const requesterUserId = ride.userId;
-      console.log('This is user ID>>>', requesterUserId) // This should work if ride.userId is set correctly
-  
-      // Update the trip history of the requester
-      const userRef = db.collection('users').doc(requesterUserId);
-      await userRef.update({
-        tripHistory: firebase.firestore.FieldValue.arrayUnion(ride),
-      });
+    // Get the current date and time
+    const requestTime = new Date().toISOString();  // Store the timestamp as ISO string
 
+    // Include driver's ID and request time in the ride details
+    const updatedRide = {
+      ...ride,
+      driverId: user.uid,   // Append driver's ID
+      requestTime: requestTime,  // Add request time
+    };
 
+    // Update the trip history of the requester with driver's ID and request time
+    const userRef = db.collection('users').doc(requesterUserId);
+    await userRef.update({
+      tripHistory: firebase.firestore.FieldValue.arrayUnion(updatedRide),  // Push the updated ride
+    });
 
-  
-      // Delete the ride request after it's been accepted
-      const rideRequestRef = db.collection('rideRequests').doc(ride.id);
-      await rideRequestRef.delete();
-  
-      console.log('Ride accepted and requester\'s trip history updated.');
-      alert('Ride Accepted');
+    // Delete the ride request after it's been accepted
+    const rideRequestRef = db.collection('rideRequests').doc(ride.id);
+    await rideRequestRef.delete();
 
-    } catch (error) {
-      console.error("Error handling ride details in Firestore: ", error);
-    }
+    console.log('Ride accepted, requester\'s trip history updated with driver\'s ID and request time.');
+    alert('Ride Accepted');
 
+  } catch (error) {
+    console.error("Error handling ride details in Firestore: ", error);
+  }
 
-    const directionsUrl = `https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent(ride.source)}&destination=${encodeURIComponent(ride.destination)}`;
-    window.location.href = directionsUrl;
-  };
+  const directionsUrl = `https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent(ride.source)}&destination=${encodeURIComponent(ride.destination)}`;
+  window.location.href = directionsUrl;
+};
+
   
 
   return (

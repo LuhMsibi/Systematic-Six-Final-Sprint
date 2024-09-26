@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import Stripe from 'stripe'; // Import Stripe library as a default import
 
+
 const stripe = new Stripe('sk_test_51PAL9I09idQbuC9s2Y2nnbKJV3n7h3ETb02CV0tTZz10RDXPUD5SoGKdYFyZBlgnVygNt9tSHfT2CutvGmOdtFH500ECHJxiKq'); // Replace with your Stripe Secret Key
 
 const app = express();

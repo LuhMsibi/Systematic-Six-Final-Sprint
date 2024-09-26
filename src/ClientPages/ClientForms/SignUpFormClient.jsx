@@ -14,6 +14,7 @@ const SignUpFormClient = () => {
 
   const signUp = e => {
     e.preventDefault();
+    
     auth.createUserWithEmailAndPassword(email, password)
       .then((userCredential) => {
         const user = userCredential.user;

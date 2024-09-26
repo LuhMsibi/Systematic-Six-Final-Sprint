@@ -36,14 +36,14 @@ function PaymentSide() {
             setProcessing(false);
             return;
         }
-
+    
         const cardElement = elements.getElement(CardElement);
         const { error, paymentIntent } = await stripe.confirmCardPayment(clientSecret, {
             payment_method: {
                 card: cardElement,
             },
         });
-
+    
         if (error) {
             console.error('[error]', error);
             setProcessing(false);
@@ -53,7 +53,7 @@ function PaymentSide() {
             setProcessing(false);
             console.log('[PaymentIntent]', paymentIntent);
             alert('Payment successful!');
-
+    
             const formData = JSON.parse(localStorage.getItem('formData'));
             const totalPrice = localStorage.getItem('totalPrice');
             const distance = localStorage.getItem('distance');
@@ -61,7 +61,7 @@ function PaymentSide() {
             const destination = localStorage.getItem('destination');
             const user = auth.currentUser; // Get the current user
             console.log('This is my ID>>>', user.uid);
-
+    
             const rideRequest = {
                 source,
                 destination,
@@ -74,18 +74,20 @@ function PaymentSide() {
                 weight: formData.weight,
                 userId: user.uid // Store the requester's user ID
             };
-
-            // Push the ride request to Firestore
-            await db.collection('rideRequests').add(rideRequest);
-            console.log('Quote details added to Firestore:', rideRequest);
-
-            // Clear localStorage and navigate to success page
-            localStorage.clear();
-            localStorage.setItem('rideRequest', JSON.stringify(rideRequest));
-
-            navigate('/PaymentSide', { replace: true });
+    
+            // Push the ride request to Firestore and get the document reference
+            const docRef = await db.collection('rideRequests').add(rideRequest);
+            const rideId = docRef.id; // Get the generated document ID
+            console.log('Quote details added to Firestore with ID:', rideId);
+    
+            // Store the ride request and ride ID in localStorage for future use
+            localStorage.setItem('rideRequest', JSON.stringify({ ...rideRequest, rideId }));
+    
+            // Navigate to the success page, passing the ride ID
+            navigate(`/PaymentSide?rideId=${rideId}`, { replace: true });
         }
     };
+    
 
     const handleChange = (e) => {
         setDisabled(e.empty);

@@ -48,7 +48,7 @@ const SignUpFormDriver = () => {
           db.collection('driversDetails').doc(user.uid).set({
             firstName: formData.firstName,
             surname: formData.surname,
-            phoneNumber: formData.phoneNumber,
+            phone: formData.phoneNumber,
             email: formData.email
           }).then(() => {
             console.log("Driver information saved to Firestore");
