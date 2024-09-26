@@ -17,10 +17,12 @@ function PaymentSide() {
     const [disabled, setDisabled] = useState(false);
 
     useEffect(() => {
+        const totalPriceInCents = Math.round(parseFloat(localStorage.getItem('totalPrice')) * 100);
+
         fetch('http://localhost:4242/create-payment-intent', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ totalPrice: localStorage.getItem('totalPrice') }),
+            body: JSON.stringify({ totalPrice: totalPriceInCents }),
         })
         .then((res) => res.json())
         .then((data) => setClientSecret(data.clientSecret))
