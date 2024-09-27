@@ -8,6 +8,7 @@ import { db, auth } from '../../../firebase'; // Adjust to your file structure
 
 const PaymentSide = () => {
   const [distance, setDistance] = useState(null);
+  const [rideCode, setRideCode] = useState(null);
   const [driverLocation, setDriverLocation] = useState(null);
   const [driverDetails, setDriverDetails] = useState(null); // Store driver's details
   const [showDriverCard, setShowDriverCard] = useState(true); // Show/hide driver card
@@ -67,7 +68,7 @@ const PaymentSide = () => {
           if (userDoc.exists) {
             const userData = userDoc.data();
             const tripHistory = userData.tripHistory || [];
-            console.log('trip history>>>', tripHistory) // Get trip history array
+            console.log('trip history>>>', tripHistory)
   
             // Check if trip history exists and contains rides
             if (tripHistory.length > 0) {
@@ -80,6 +81,7 @@ const PaymentSide = () => {
               console.log('LocalRideId>>', rideIdFromLocalStorage)
               const matchingRide = tripHistory.find(ride => ride.id === rideIdFromLocalStorage);
               console.log('matchingRide>>>', matchingRide)
+              setRideCode(matchingRide.rideCode);
   
               if (matchingRide) {
                 const driverUID = matchingRide.driverId;
@@ -139,6 +141,8 @@ const PaymentSide = () => {
           <div>
             <h3 className='text-md font-semibold mb-2'>Distance from Driver:</h3>
             <p className='text-lg'>The driver is approximately {distance.toFixed(2)} km away.</p>
+            <p className='text-lg'>Ride Code: {rideCode}</p>
+            
           </div>
         ) : (
           <p>Distance information is not available.</p>

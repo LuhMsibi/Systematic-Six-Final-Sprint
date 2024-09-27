@@ -140,6 +140,8 @@ const handleAcceptRide = async (ride) => {
   setRideAccepted(true);
 
   try {
+    const uniqueCode = Math.floor(10000 + Math.random() * 90000);  // Generates a number between 10000 and 99999
+
     // Get the requester's user ID from the ride request
     const requesterUserId = ride.userId;
     console.log('This is user ID>>>', requesterUserId); // This should work if ride.userId is set correctly
@@ -151,7 +153,8 @@ const handleAcceptRide = async (ride) => {
     const updatedRide = {
       ...ride,
       driverId: user.uid,   // Append driver's ID
-      requestTime: requestTime,  // Add request time
+      requestTime: requestTime, 
+      rideCode: uniqueCode, // Add request time
     };
 
     // Update the trip history of the requester with driver's ID and request time
@@ -159,6 +162,12 @@ const handleAcceptRide = async (ride) => {
     await userRef.update({
       tripHistory: firebase.firestore.FieldValue.arrayUnion(updatedRide),  // Push the updated ride
     });
+
+
+    const userRef2 = db.collection('driversDetails').doc(user.uid);
+    await userRef2.update({
+      tripHistory: firebase.firestore.FieldValue.arrayUnion(updatedRide)
+    })
 
     // Delete the ride request after it's been accepted
     const rideRequestRef = db.collection('rideRequests').doc(ride.id);
