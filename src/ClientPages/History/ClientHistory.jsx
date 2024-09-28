@@ -7,8 +7,10 @@ import { auth, db } from '../../../firebase'; // Import Firebase auth and Firest
 const ClientHistory = () => {
   const [tripHistory, setTripHistory] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [currentRides, setCurrentRides] = useState([]);  // State for current rides
-  const [loadingCurrentRides, setLoadingCurrentRides] = useState(true);  // Loading state for current rides
+  const [currentRides, setCurrentRides] = useState([]);
+  const [loadingCurrentRides, setLoadingCurrentRides] = useState(true);
+  const [driverDetails, setDriverDetails] = useState({});
+  const [selectedRideId, setSelectedRideId] = useState(null);
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged(async (user) => {
@@ -27,7 +29,7 @@ const ClientHistory = () => {
           } catch (error) {
             console.error("Error fetching trip history from Firestore:", error);
           } finally {
-            setLoading(false); // Set loading to false once data is fetched
+            setLoading(false);
           }
         };
 
@@ -40,24 +42,10 @@ const ClientHistory = () => {
               const userData = snapshot.data();
               const currentRidesData = userData.CurrentRide;
       
-              // Log the current rides data for debugging
-              console.log("Current Rides Data:", currentRidesData);
-      
-              // Check if currentRidesData is an array or a single object
               if (Array.isArray(currentRidesData)) {
-                setCurrentRides(prevRides => [
-                  ...prevRides, // Existing rides
-                  ...currentRidesData.filter(newRide => 
-                    !prevRides.some(prevRide => prevRide.id === newRide.id)
-                  ), // Add new rides if not already present
-                ]);
+                setCurrentRides(currentRidesData);
               } else if (currentRidesData && typeof currentRidesData === 'object') {
-                // If it's a single ride, check if it already exists before adding
-                setCurrentRides(prevRides => 
-                  !prevRides.some(prevRide => prevRide.id === currentRidesData.id) 
-                  ? [...prevRides, currentRidesData] // Append the new ride if it doesn't exist
-                  : prevRides
-                );    
+                setCurrentRides([currentRidesData]);
               } else {
                 console.error("CurrentRide data is not valid:", currentRidesData);
               }
@@ -67,23 +55,41 @@ const ClientHistory = () => {
           } catch (error) {
             console.error("Error fetching current rides from Firestore:", error);
           } finally {
-            setLoadingCurrentRides(false);  // Set loading to false once current rides are fetched
+            setLoadingCurrentRides(false);
           }
         };
-        
+
         fetchTripHistory();
         fetchCurrentRides();
       } else {
         console.log("User is not logged in.");
-        setTripHistory([]); // Clear trip history if no user is logged in
-        setCurrentRides([]); // Clear current rides if no user is logged in
+        setTripHistory([]);
+        setCurrentRides([]);
         setLoading(false);
         setLoadingCurrentRides(false);
       }
     });
 
-    return () => unsubscribe(); // Cleanup the listener on component unmount
-  }, []); 
+    return () => unsubscribe();
+  }, []);
+
+  // Function to fetch driver details based on the selected ride
+  const fetchDriverDetails = async (rideId, driverId) => {
+    setSelectedRideId(rideId); 
+    try {
+      const driverRef = db.collection('driversDetails').doc(driverId);
+      const driverSnapshot = await driverRef.get();
+
+      if (driverSnapshot.exists) {
+        setDriverDetails(driverSnapshot.data());
+        console.log("Drivers details",driverDetails);
+      } else {
+        console.log('No driver found with the provided ID.');
+      }
+    } catch (error) {
+      console.error('Error fetching driver details:', error);
+    }
+  };
 
   return (
     <div>
@@ -103,6 +109,33 @@ const ClientHistory = () => {
                 <div><strong>Destination:</strong> {ride.destination}</div>
                 <div><strong>Distance:</strong> {ride.distance} km</div>
                 <div><strong>Price:</strong> R{ride.price}</div>
+
+                <button 
+                  className='mt-2 bg-blue-500 text-white px-3 py-1 rounded'
+                  onClick={() => fetchDriverDetails(ride.id, ride.driverId)}
+                >
+                  View Driver
+                </button>
+
+                {selectedRideId === ride.id && driverDetails && (
+                  <div className='p-4 bg-gray-100 mt-4'>
+                    <h3 className='text-lg font-bold'>Driver Details</h3>
+                    <img
+                      className='object-cover object-center h-32'
+                      src={driverDetails.profilePicture || 'https://via.placeholder.com/400'}
+                      alt='Profile'
+                    />
+                    <div><strong>Name:</strong> {driverDetails.firstName} {driverDetails.lastName}</div>
+                    <div><strong>Email:</strong> {driverDetails.email}</div>
+                    <div><strong>Phone:</strong> {driverDetails.phone}</div>
+                    {/* Ride code from the trip history */}
+                    {ride.rideCode ? (
+                      <div><strong>Ride Code:</strong> {ride.rideCode}</div>
+                    ) : (
+                      <div><strong>Ride Code:</strong> Not available</div>
+                    )}
+                  </div>
+                )}
               </li>
             ))}
           </ul>
@@ -122,6 +155,8 @@ const ClientHistory = () => {
                 <div><strong>Distance:</strong> {trip.distance} km</div>
                 <div><strong>Price:</strong> R{trip.price}</div>
                 <div><strong>Date:</strong> {trip.movingDate}</div>
+                {/* Displaying the ride code directly from trip history */}
+                <div><strong>Ride Code:</strong> {trip.rideCode || 'Not available'}</div>
               </li>
             ))}
           </ul>
