@@ -82,13 +82,18 @@ const ClientHistory = () => {
 
       if (driverSnapshot.exists) {
         setDriverDetails(driverSnapshot.data());
-        console.log("Drivers details",driverDetails);
+        console.log("Drivers details", driverDetails);
       } else {
         console.log('No driver found with the provided ID.');
       }
     } catch (error) {
       console.error('Error fetching driver details:', error);
     }
+  };
+
+  // Function to hide driver details
+  const hideDriverDetails = () => {
+    setSelectedRideId(null); // Reset selected ride ID to hide the details
   };
 
   return (
@@ -118,7 +123,15 @@ const ClientHistory = () => {
                 </button>
 
                 {selectedRideId === ride.id && driverDetails && (
-                  <div className='p-4 bg-gray-100 mt-4'>
+                  <div className='relative p-4 bg-gray-100 mt-4'>
+                    {/* Close Button */}
+                    <button 
+                      className='absolute top-2 right-2 text-red-500 font-bold'
+                      onClick={hideDriverDetails}
+                    >
+                      &#x2715; {/* This is the 'X' icon */}
+                    </button>
+
                     <h3 className='text-lg font-bold'>Driver Details</h3>
                     <img
                       className='object-cover object-center h-32'
@@ -128,7 +141,6 @@ const ClientHistory = () => {
                     <div><strong>Name:</strong> {driverDetails.firstName} {driverDetails.lastName}</div>
                     <div><strong>Email:</strong> {driverDetails.email}</div>
                     <div><strong>Phone:</strong> {driverDetails.phone}</div>
-                    {/* Ride code from the trip history */}
                     {ride.rideCode ? (
                       <div><strong>Ride Code:</strong> {ride.rideCode}</div>
                     ) : (
@@ -143,24 +155,36 @@ const ClientHistory = () => {
 
         <h2 className='text-2xl font-bold mb-4'>My Trip History</h2>
         {loading ? (
-          <p>Loading trip history...</p>
-        ) : tripHistory.length === 0 ? (
-          <p>No trip history available.</p>
-        ) : (
-          <ul>
-            {tripHistory.map((trip, index) => (
-              <li key={index} className='border-b py-2'>
-                <div><strong>Source:</strong> {trip.source}</div>
-                <div><strong>Destination:</strong> {trip.destination}</div>
-                <div><strong>Distance:</strong> {trip.distance} km</div>
-                <div><strong>Price:</strong> R{trip.price}</div>
-                <div><strong>Date:</strong> {trip.movingDate}</div>
-                {/* Displaying the ride code directly from trip history */}
-                <div><strong>Ride Code:</strong> {trip.rideCode || 'Not available'}</div>
-              </li>
-            ))}
-          </ul>
-        )}
+  <p className="text-center text-gray-500">Loading trip history...</p>
+) : tripHistory.length === 0 ? (
+  <p className="text-center text-gray-500">No trip history available.</p>
+) : (
+  <ul className="space-y-4">
+    {tripHistory.map((trip, index) => (
+      <li key={index} className="border-b py-2">
+        <div className="text-lg">
+          <strong>Source:</strong> {trip.source}
+        </div>
+        <div className="text-lg">
+          <strong>Destination:</strong> {trip.destination}
+        </div>
+        <div className="text-lg">
+          <strong>Distance:</strong> {trip.distance} km
+        </div>
+        <div className="text-lg">
+          <strong>Price:</strong> R{trip.price}
+        </div>
+        <div className="text-lg">
+          <strong>Date:</strong> {trip.movingDate}
+        </div>
+        <div className="text-lg">
+          <strong>Ride Code:</strong> {trip.rideCode || 'Not available'}
+        </div>
+      </li>
+    ))}
+  </ul>
+)}
+
       </div>
     </div>
   );
