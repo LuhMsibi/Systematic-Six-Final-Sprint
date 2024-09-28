@@ -27,7 +27,7 @@ const SignUpFormClient = () => {
           email: email
         }).then(() => {
           console.log("User information saved to Firestore");
-          navigate('../ClientHome');
+          navigate('../ClienComponents/ClientProfile');
         }).catch(error => {
           console.error("Error adding user information to Firestore: ", error);
           alert("There was an error saving your information. Please try again.");
@@ -47,7 +47,7 @@ const SignUpFormClient = () => {
         userRef.get().then((doc) => {
           if (doc.exists) {
             console.log("User already exists in Firestore");
-            navigate('../ClientHome');
+            navigate('/ClientHome');
           } else {
             // Create a new document in Firestore with the user's UID
             userRef.set({
@@ -57,7 +57,7 @@ const SignUpFormClient = () => {
               email: user.email
             }).then(() => {
               console.log("User information saved to Firestore");
-              navigate('../ClientHome');
+              navigate('/ClientProfile');
             }).catch(error => {
               console.error("Error adding user information to Firestore: ", error);
               alert("There was an error saving your information. Please try again.");

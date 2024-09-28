@@ -52,7 +52,7 @@ const SignUpFormDriver = () => {
             email: formData.email
           }).then(() => {
             console.log("Driver information saved to Firestore");
-            navigate('/DriverHome'); // Redirect to DriverHome after successful submission
+            navigate('/DriverProfile'); // Redirect to DriverHome after successful submission
           }).catch(error => {
             console.error("Error adding driver information to Firestore: ", error);
             alert("There was an error saving your information. Please try again.");
@@ -80,7 +80,7 @@ const SignUpFormDriver = () => {
           email: user.email
         }).then(() => {
           console.log("Driver information saved to Firestore");
-          navigate('/DriverHome');
+          navigate('/DriverProfile');
         }).catch(error => {
           console.error("Error adding driver information to Firestore: ", error);
           alert("There was an error saving your information. Please try again.");

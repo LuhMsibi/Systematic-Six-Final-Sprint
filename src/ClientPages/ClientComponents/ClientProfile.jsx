@@ -80,7 +80,7 @@ const ClientProfile = () => {
         <div>
             <ClientNav />
             <h2 className="text-3xl font-bold mb-6 mt-4 text-center text-[#131a4b]">Client Profile</h2>
-            
+            <p className='text-center text-red-400'>Please Make sure this page is Complete</p>
             <div className="max-w-xl mx-auto bg-white p-8 rounded-lg shadow-md">
                 <div className="flex items-center justify-center mb-6">
                     {profilePicture ? (

@@ -114,6 +114,7 @@ const ClientHistory = () => {
                 <div><strong>Destination:</strong> {ride.destination}</div>
                 <div><strong>Distance:</strong> {ride.distance} km</div>
                 <div><strong>Price:</strong> R{ride.price}</div>
+                <div><strong>Ride Code:</strong> {ride.rideCode}</div>
 
                 <button 
                   className='mt-2 bg-blue-500 text-white px-3 py-1 rounded'

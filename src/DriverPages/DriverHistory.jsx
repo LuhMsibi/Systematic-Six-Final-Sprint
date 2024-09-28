@@ -10,50 +10,30 @@ const DriverHistory = () => {
   const [loading, setLoading] = useState(true);
   const [loadingCurrentRides, setLoadingCurrentRides] = useState(true);
   const [inputCodes, setInputCodes] = useState({});
-  const [userDetails, setUserDetails] = useState(null); // State for user details
-  const [selectedRideId, setSelectedRideId] = useState(null); // State to track the selected ride ID for fetching user details
+  const [userDetails, setUserDetails] = useState(null);
+  const [selectedRideId, setSelectedRideId] = useState(null);
 
   useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged((user) => {
+    const unsubscribe = auth.onAuthStateChanged(async (user) => {
       if (user) {
-        const fetchTripHistory = async () => {
-          try {
-            const userRef = db.collection('driversDetails').doc(user.uid);
-            const docSnapshot = await userRef.get();
+        try {
+          // Fetch trip history and current rides concurrently
+          const userRef = db.collection('driversDetails').doc(user.uid);
+          const docSnapshot = await userRef.get();
 
-            if (docSnapshot.exists) {
-              const userData = docSnapshot.data();
-              setTripHistory(userData.tripHistory || []);
-            } else {
-              console.log("No trip history found for this user.");
-            }
-          } catch (error) {
-            console.error("Error fetching trip history from Firestore:", error);
-          } finally {
-            setLoading(false);
+          if (docSnapshot.exists) {
+            const userData = docSnapshot.data();
+            setTripHistory(userData.tripHistory || []);
+            setCurrentRides(userData.CurrentRide || []);
+          } else {
+            console.log("No data found for this user.");
           }
-        };
-
-        const fetchCurrentRides = async () => {
-          try {
-            const currentRidesRef = db.collection('driversDetails').doc(user.uid);
-            const snapshot = await currentRidesRef.get();
-
-            if (snapshot.exists) {
-              const userData = snapshot.data();
-              setCurrentRides(userData.CurrentRide || []);
-            } else {
-              console.log("No current rides found for this user.");
-            }
-          } catch (error) {
-            console.error("Error fetching current rides from Firestore:", error);
-          } finally {
-            setLoadingCurrentRides(false);
-          }
-        };
-
-        fetchTripHistory();
-        fetchCurrentRides();
+        } catch (error) {
+          console.error("Error fetching data from Firestore:", error);
+        } finally {
+          setLoading(false);
+          setLoadingCurrentRides(false);
+        }
       } else {
         console.log("No authenticated user found.");
         setLoading(false);
@@ -64,12 +44,10 @@ const DriverHistory = () => {
     return () => unsubscribe();
   }, []);
 
-  // Handle input change for completion code
   const handleInputChange = (e, rideId) => {
     setInputCodes({ ...inputCodes, [rideId]: e.target.value });
   };
 
-  // Handle ride completion
   const handleCompleteRide = async (rideId) => {
     const enteredCode = inputCodes[rideId];
 
@@ -102,9 +80,9 @@ const DriverHistory = () => {
 
               await userRef.update({ CurrentRide: firebase.firestore.FieldValue.arrayRemove(rideToComplete) });
 
-              const userTripHistory = userData.tripHistory || [];
-              const updatedUserTripHistory = userTripHistory.filter(trip => trip.id !== rideId);
-              await userRef.update({ tripHistory: updatedUserTripHistory });
+              // const userTripHistory = userData.tripHistory || [];
+              // const updatedUserTripHistory = userTripHistory.filter(trip => trip.id !== rideId);
+              // await userRef.update({ tripHistory: updatedUserTripHistory });
 
               alert('User ride removed from current rides and trip history.');
             }
@@ -121,7 +99,6 @@ const DriverHistory = () => {
     }
   };
 
-  // Fetch user details based on selected ride
   const fetchUserDetails = async (ride) => {
     try {
       const userRef = db.collection('users').doc(ride.userId);
@@ -129,7 +106,7 @@ const DriverHistory = () => {
 
       if (userSnapshot.exists) {
         setUserDetails(userSnapshot.data());
-        setSelectedRideId(ride.id); // Set the selected ride ID to show details
+        setSelectedRideId(ride.id);
       } else {
         console.log('No user found with the provided ID.');
       }
@@ -138,10 +115,9 @@ const DriverHistory = () => {
     }
   };
 
-  // Function to hide user details
   const hideUserDetails = () => {
-    setUserDetails(null); // Reset user details
-    setSelectedRideId(null); // Reset selected ride ID
+    setUserDetails(null);
+    setSelectedRideId(null);
   };
 
   return (
@@ -190,7 +166,7 @@ const DriverHistory = () => {
                       className='absolute top-2 right-2 text-red-500 font-bold'
                       onClick={hideUserDetails}
                     >
-                      &#x2715; {/* This is the 'X' icon */}
+                      &#x2715;
                     </button>
 
                     <h3 className='text-lg font-bold'>User Details</h3>
@@ -218,7 +194,6 @@ const DriverHistory = () => {
           <ul className="space-y-4">
             {tripHistory.map((trip, index) => (
               <li key={index} className="border-b py-2">
-                
                 <div className="text-lg"><strong>Source:</strong> {trip.source}</div>
                 <div className="text-lg"><strong>Destination:</strong> {trip.destination}</div>
                 <div className="text-lg"><strong>Distance:</strong> {trip.distance} km</div>
