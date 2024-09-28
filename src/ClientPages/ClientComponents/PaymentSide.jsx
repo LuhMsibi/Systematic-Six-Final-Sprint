@@ -12,11 +12,11 @@ const PaymentSide = () => {
   const [driverLocation, setDriverLocation] = useState(null);
   const [driverDetails, setDriverDetails] = useState(null); // Store driver's details
   const [showDriverCard, setShowDriverCard] = useState(true); // Show/hide driver card
+  const [user, setUser] = useState(null); // New user state
   const mapRef = useRef(null);
   const socketRef = useRef(null);
-  const user = auth.currentUser; // Get the logged-in client
   const rideID = JSON.parse(localStorage.getItem('rideRequest'))?.rideId;
-  console.log('this is ride id>>>', rideID) // Fetch rideId from localStorage
+  console.log('this is ride id>>>', rideID); // Fetch rideId from localStorage
 
   const { isLoaded } = useLoadScript({
     googleMapsApiKey: 'AIzaSyCKqk4I-ZPHLGueUz17Xhl-oCz0MZ2YVx0' // Use your API key
@@ -32,31 +32,26 @@ const PaymentSide = () => {
     setShowDriverCard(true); // Always reset to true on page load
   }, []);
 
-  const showDriver = () =>{
-    setShowDriverCard(true)
-  }
+  const showDriver = () => {
+    setShowDriverCard(true);
+  };
 
-  // Setup socket connection after map is loaded
-  // useEffect(() => {
-  //   if (isLoaded) {
-  //     socketRef.current = io('http://localhost:4242'); // For local development
+  // Listen to auth state changes to update the user state
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged((currentUser) => {
+      if (currentUser) {
+        setUser(currentUser); // Set user if authenticated
+      } else {
+        setUser(null); // Clear user if not authenticated
+      }
+    });
 
-  //     socketRef.current.on('driverLocation', (location) => {
-  //       setDriverLocation(location);
-  //       if (mapRef.current) {
-  //         mapRef.current.panTo(location);
-  //       }
-  //     });
+    return () => {
+      unsubscribe(); // Clean up the listener on component unmount
+    };
+  }, []);
 
-  //     // Clean up the socket connection when the component unmounts
-  //     return () => {
-  //       if (socketRef.current) {
-  //         socketRef.current.disconnect();
-  //       }
-  //     };
-  //   }
-  // }, [isLoaded]);
-
+  // Fetch driver's details using the trip history
   useEffect(() => {
     const fetchDriverIdFromTripHistory = async () => {
       try {
@@ -64,28 +59,26 @@ const PaymentSide = () => {
           // Reference the user's document in the Firestore users collection
           const userRef = db.collection('users').doc(user.uid);
           const userDoc = await userRef.get();
-  
+
           if (userDoc.exists) {
             const userData = userDoc.data();
             const tripHistory = userData.tripHistory || [];
-            console.log('trip history>>>', tripHistory)
-  
+            console.log('trip history>>>', tripHistory);
+
             // Check if trip history exists and contains rides
             if (tripHistory.length > 0) {
               const storedRideRequest = JSON.parse(localStorage.getItem('rideRequest'));
 
-
-            
               // Find the ride with the matching rideID stored in localStorage
               const rideIdFromLocalStorage = storedRideRequest ? storedRideRequest.rideId : null;
-              console.log('LocalRideId>>', rideIdFromLocalStorage)
+              console.log('LocalRideId>>', rideIdFromLocalStorage);
               const matchingRide = tripHistory.find(ride => ride.id === rideIdFromLocalStorage);
-              console.log('matchingRide>>>', matchingRide)
+              console.log('matchingRide>>>', matchingRide);
               setRideCode(matchingRide.rideCode);
-  
+
               if (matchingRide) {
                 const driverUID = matchingRide.driverId;
-  
+
                 // Fetch driver details using the driverUID
                 if (driverUID) {
                   const driverRef = db.collection('driversDetails').doc(driverUID);
@@ -95,8 +88,7 @@ const PaymentSide = () => {
                     setDriverDetails(driverSnapshot.data()); // Set the driver details in state
                     setShowDriverCard(true); // Show the driver card
 
-                  }  else {
-                   
+                  } else {
                     console.error('No driver found with the provided UID.');
                   }
                 } else {
@@ -116,10 +108,9 @@ const PaymentSide = () => {
         console.error('Error fetching driver UID or driver details:', error);
       }
     };
-  
+
     fetchDriverIdFromTripHistory();
   }, [user, rideID]);
-  
 
   if (!isLoaded) return <div>Loading...</div>;
 
@@ -128,7 +119,7 @@ const PaymentSide = () => {
       <Link to='/GetQuote'>
         <IoArrowBack />
       </Link>
-      
+
       <h1 className='text-xl font-bold mb-4'>Payment and Tracking</h1>
       <div className='bg-white rounded-lg shadow-md p-4'>
         <h2 className='text-lg font-semibold mb-2'>Payment Details</h2>
@@ -142,46 +133,42 @@ const PaymentSide = () => {
             <h3 className='text-md font-semibold mb-2'>Distance from Driver:</h3>
             <p className='text-lg'>The driver is approximately {distance.toFixed(2)} km away.</p>
             <p className='text-lg'>Ride Code: {rideCode}</p>
-            
           </div>
         ) : (
           <p>Distance information is not available.</p>
         )}
-        
+
         {driverDetails && showDriverCard && (
-         <div className='fixed inset-0 flex items-center justify-center z-50 mt-10'>
-         <div className='max-w-2xl mx-4 sm:max-w-sm md:max-w-sm lg:max-w-sm xl:max-w-sm sm:mx-auto md:mx-auto lg:mx-auto xl:mx-auto mt-16 bg-white shadow-xl rounded-lg text-gray-900 p-6 relative'>
-           <button
-             className='absolute top-2 right-2 text-gray-500 hover:text-gray-800'
-             onClick={() => setShowDriverCard(false)}
-           >
-             &#10005;
-           </button>
-           <h3 className='text-md font-semibold mb-2'>{driverDetails.firstName} Accepted Your Ride</h3>
-           <div className='rounded-t-lg h-32 overflow-hidden'>
-             <img
-               className='object-cover object-top w-full'
-               src='https://images.unsplash.com/photo-1549880338-65ddcdfd017b?ixlib=rb-1.2.1&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=400&fit=max&ixid=eyJhcHBfaWQiOjE0NTg5fQ'
-               alt='Background'
-             />
-           </div>
-           <div className='mx-auto w-32 h-32 relative -mt-16 border-4 border-white rounded-full overflow-hidden'>
-             <img
-               className='object-cover object-center h-32'
-               src={driverDetails.profilePicture || 'https://via.placeholder.com/400'}
-               alt='Profile'
-             />
-           </div>
-           <div className='text-center mt-2'>
-             <h2 className='font-semibold'>{driverDetails.firstName}</h2>
-             <p className='text-gray-500'>{driverDetails.email}</p>
-             <p className='text-gray-500'>{driverDetails.phone}</p>
-           </div>
-           
-          
-         </div>
-       </div>
-       
+          <div className='fixed inset-0 flex items-center justify-center z-50 mt-10'>
+            <div className='max-w-2xl mx-4 sm:max-w-sm md:max-w-sm lg:max-w-sm xl:max-w-sm sm:mx-auto md:mx-auto lg:mx-auto xl:mx-auto mt-16 bg-white shadow-xl rounded-lg text-gray-900 p-6 relative'>
+              <button
+                className='absolute top-2 right-2 text-gray-500 hover:text-gray-800'
+                onClick={() => setShowDriverCard(false)}
+              >
+                &#10005;
+              </button>
+              <h3 className='text-md font-semibold mb-2'>{driverDetails.firstName} Accepted Your Ride</h3>
+              <div className='rounded-t-lg h-32 overflow-hidden'>
+                <img
+                  className='object-cover object-top w-full'
+                  src='https://images.unsplash.com/photo-1549880338-65ddcdfd017b?ixlib=rb-1.2.1&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=400&fit=max&ixid=eyJhcHBfaWQiOjE0NTg5fQ'
+                  alt='Background'
+                />
+              </div>
+              <div className='mx-auto w-32 h-32 relative -mt-16 border-4 border-white rounded-full overflow-hidden'>
+                <img
+                  className='object-cover object-center h-32'
+                  src={driverDetails.profilePicture || 'https://via.placeholder.com/400'}
+                  alt='Profile'
+                />
+              </div>
+              <div className='text-center mt-2'>
+                <h2 className='font-semibold'>{driverDetails.firstName}</h2>
+                <p className='text-gray-500'>{driverDetails.email}</p>
+                <p className='text-gray-500'>{driverDetails.phone}</p>
+              </div>
+            </div>
+          </div>
         )}
       </div>
 
@@ -192,11 +179,9 @@ const PaymentSide = () => {
           mapContainerStyle={{ width: '100%', height: '100%' }}
           onLoad={map => mapRef.current = map} // Set mapRef to the GoogleMap instance
         >
-
           {driverLocation && <Marker position={driverLocation} />}
         </GoogleMap>
         <button className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded z-50' onClick={showDriver}>Show driver Details</button>
-
       </div>
     </div>
   );

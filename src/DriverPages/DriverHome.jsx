@@ -140,7 +140,8 @@ const handleAcceptRide = async (ride) => {
   setRideAccepted(true);
 
   try {
-    const uniqueCode = Math.floor(10000 + Math.random() * 90000);  // Generates a number between 10000 and 99999
+    const uniqueCode = Math.floor(10000 + Math.random() * 90000);
+    console.log('Generated Unique Code:', uniqueCode);  // Debugging step
 
     // Get the requester's user ID from the ride request
     const requesterUserId = ride.userId;
@@ -152,21 +153,37 @@ const handleAcceptRide = async (ride) => {
     // Include driver's ID and request time in the ride details
     const updatedRide = {
       ...ride,
-      driverId: user.uid,   // Append driver's ID
+      driverId: user.uid, 
+      rideCode: uniqueCode,  // Append driver's ID
       requestTime: requestTime, 
-      rideCode: uniqueCode, // Add request time
+     
     };
 
     // Update the trip history of the requester with driver's ID and request time
     const userRef = db.collection('users').doc(requesterUserId);
     await userRef.update({
-      tripHistory: firebase.firestore.FieldValue.arrayUnion(updatedRide),  // Push the updated ride
+      tripHistory: firebase.firestore.FieldValue.arrayUnion(updatedRide),
     });
 
-
-    const userRef2 = db.collection('driversDetails').doc(user.uid);
+    const userRef2 = db.collection('users').doc(requesterUserId);
     await userRef2.update({
-      tripHistory: firebase.firestore.FieldValue.arrayUnion(updatedRide)
+      CurrentRide: firebase.firestore.FieldValue.arrayUnion(updatedRide)
+    })
+
+    
+
+    
+
+
+    const userRef3 = db.collection('driversDetails').doc(user.uid);
+    await userRef3.update({
+      tripHistory: firebase.firestore.FieldValue.arrayUnion(updatedRide),
+
+    })
+
+    const userRef4 = db.collection('driversDetails').doc(user.uid);
+    await userRef4.update({
+      CurrentRide: firebase.firestore.FieldValue.arrayUnion(updatedRide)  // Push the updated ride
     })
 
     // Delete the ride request after it's been accepted
