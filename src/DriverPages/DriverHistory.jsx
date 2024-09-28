@@ -3,39 +3,37 @@ import { CiHome } from "react-icons/ci";
 import DriverNav from './DriverComponents/DriverNav';
 import { auth, db } from '../../firebase';
 import firebase from 'firebase/app';
- // Import Firebase auth and Firestore
 
 const DriverHistory = () => {
   const [tripHistory, setTripHistory] = useState([]);
-  const [currentRides, setCurrentRides] = useState([]);  // State for current rides
+  const [currentRides, setCurrentRides] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [loadingCurrentRides, setLoadingCurrentRides] = useState(true);  // Loading state for current rides
-  const [inputCodes, setInputCodes] = useState({});  // Store input codes by ride ID
+  const [loadingCurrentRides, setLoadingCurrentRides] = useState(true);
+  const [inputCodes, setInputCodes] = useState({});
+  const [userDetails, setUserDetails] = useState(null); // State for user details
+  const [selectedRideId, setSelectedRideId] = useState(null); // State to track the selected ride ID for fetching user details
 
   useEffect(() => {
-    // Listen for authentication state changes
     const unsubscribe = auth.onAuthStateChanged((user) => {
       if (user) {
-        // Fetch trip history from Firestore using the user's UID
         const fetchTripHistory = async () => {
           try {
             const userRef = db.collection('driversDetails').doc(user.uid);
             const docSnapshot = await userRef.get();
-  
+
             if (docSnapshot.exists) {
               const userData = docSnapshot.data();
-              setTripHistory(userData.tripHistory || []); // Set tripHistory from Firestore
+              setTripHistory(userData.tripHistory || []);
             } else {
               console.log("No trip history found for this user.");
             }
           } catch (error) {
             console.error("Error fetching trip history from Firestore:", error);
           } finally {
-            setLoading(false); // Set loading to false once data is fetched
+            setLoading(false);
           }
         };
 
-        // Fetch current rides from Firestore
         const fetchCurrentRides = async () => {
           try {
             const currentRidesRef = db.collection('driversDetails').doc(user.uid);
@@ -43,28 +41,26 @@ const DriverHistory = () => {
 
             if (snapshot.exists) {
               const userData = snapshot.data();
-              setCurrentRides(userData.CurrentRide || []);  // Set the current rides in state
+              setCurrentRides(userData.CurrentRide || []);
             } else {
               console.log("No current rides found for this user.");
             }
           } catch (error) {
             console.error("Error fetching current rides from Firestore:", error);
           } finally {
-            setLoadingCurrentRides(false);  // Set loading to false once current rides are fetched
+            setLoadingCurrentRides(false);
           }
         };
 
-        // Fetch the trip history and current rides after confirming user authentication
         fetchTripHistory();
         fetchCurrentRides();
       } else {
         console.log("No authenticated user found.");
-        setLoading(false);  // Stop loading since no data will be fetched
+        setLoading(false);
         setLoadingCurrentRides(false);
       }
     });
 
-    // Cleanup subscription when component unmounts
     return () => unsubscribe();
   }, []);
 
@@ -75,78 +71,84 @@ const DriverHistory = () => {
 
   // Handle ride completion
   const handleCompleteRide = async (rideId) => {
-    const enteredCode = inputCodes[rideId];  // Get the entered code for the current ride
-    
+    const enteredCode = inputCodes[rideId];
+
     try {
       const user = auth.currentUser;
       if (user) {
-        // Fetch the driver's current ride data
         const driverRef = db.collection('driversDetails').doc(user.uid);
         const driverSnapshot = await driverRef.get();
-        
+
         if (driverSnapshot.exists) {
           const driverData = driverSnapshot.data();
-          
-          // Ensure CurrentRide is an array
-          const currentRides = driverData.CurrentRide || []; // Set to an empty array if undefined
-          const rideToComplete = currentRides.find(ride => ride.id === rideId); // Find the specific ride by ID
-          
+          const currentRides = driverData.CurrentRide || [];
+          const rideToComplete = currentRides.find(ride => ride.id === rideId);
+
           if (!rideToComplete) {
             alert("Ride not found.");
             return;
           }
-  
-          // Check if the entered code matches the ride's code
+
           if (String(enteredCode).trim() === String(rideToComplete.rideCode).trim()) {
-            // Remove the completed ride from the driver's CurrentRide
             const updatedDriverRides = currentRides.filter(currentRide => currentRide.id !== rideId);
-            
-            // Update Firestore: remove the completed ride from driver's CurrentRide
             await driverRef.update({ CurrentRide: firebase.firestore.FieldValue.arrayRemove(rideToComplete) });
-            
-            // Now update the user's CurrentRide and trip history
-            const userRef = db.collection('users').doc(rideToComplete.userId); 
+
+            const userRef = db.collection('users').doc(rideToComplete.userId);
             const userSnapshot = await userRef.get();
-    
+
             if (userSnapshot.exists) {
               const userData = userSnapshot.data();
-              const userCurrentRides = userData.CurrentRide || []; // Set to an empty array if undefined
-              
-              // Update Firestore: remove the completed ride from user's CurrentRide
-              await userRef.update({ CurrentRide: firebase.firestore.FieldValue.arrayRemove(rideToComplete) }); 
-              
-              // Update user's trip history (assuming `tripHistory` exists in the `users` collection)
+              const userCurrentRides = userData.CurrentRide || [];
+
+              await userRef.update({ CurrentRide: firebase.firestore.FieldValue.arrayRemove(rideToComplete) });
+
               const userTripHistory = userData.tripHistory || [];
               const updatedUserTripHistory = userTripHistory.filter(trip => trip.id !== rideId);
-      
               await userRef.update({ tripHistory: updatedUserTripHistory });
-  
+
               alert('User ride removed from current rides and trip history.');
             }
-  
-            // Update local state after completion
+
             setCurrentRides(updatedDriverRides);
-            alert("Ride completed successfully and removed from both driver and user records!");
-  
+            alert("Ride completed successfully and removed from both driver and user records.");
           } else {
-            alert("Incorrect code. Please try again.");
+            alert("Invalid completion code.");
           }
         }
       }
     } catch (error) {
-      console.error("Error completing the ride:", error);     
+      console.error("Error completing the ride:", error);
     }
   };
-  
-  
+
+  // Fetch user details based on selected ride
+  const fetchUserDetails = async (ride) => {
+    try {
+      const userRef = db.collection('users').doc(ride.userId);
+      const userSnapshot = await userRef.get();
+
+      if (userSnapshot.exists) {
+        setUserDetails(userSnapshot.data());
+        setSelectedRideId(ride.id); // Set the selected ride ID to show details
+      } else {
+        console.log('No user found with the provided ID.');
+      }
+    } catch (error) {
+      console.error('Error fetching user details:', error);
+    }
+  };
+
+  // Function to hide user details
+  const hideUserDetails = () => {
+    setUserDetails(null); // Reset user details
+    setSelectedRideId(null); // Reset selected ride ID
+  };
 
   return (
     <div>
       <DriverNav />
       <div className='px-4 py-2'></div>
-
       <div className='p-4'>
-        {/* Display current rides */}
         <h2 className='text-2xl font-bold mb-4'>Current Rides</h2>
         {loadingCurrentRides ? (
           <p>Loading current rides...</p>
@@ -160,44 +162,68 @@ const DriverHistory = () => {
                 <div><strong>Destination:</strong> {ride.destination}</div>
                 <div><strong>Distance:</strong> {ride.distance} km</div>
                 <div><strong>Price:</strong> R{ride.price}</div>
-                <div><strong>Date:</strong> {ride.movingDate}</div>
-                <div><strong>User:</strong> {ride.userId}</div>
 
-                <label htmlFor={`code-${ride.id}`}>Completion Code</label>
                 <input
-                  className='ml-5 border mb-5'
-                  name={`code-${ride.id}`}
-                  type="text"
+                  type='text'
+                  placeholder='Enter Completion Code'
+                  value={inputCodes[ride.id] || ''}
                   onChange={(e) => handleInputChange(e, ride.id)}
-                  value={inputCodes[ride.id] || ""}
+                  className='border rounded p-1 mt-2'
                 />
-
-                <button
-                  className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded'
+                <button 
+                  className='mt-2 bg-blue-500 text-white px-3 py-1 rounded'
                   onClick={() => handleCompleteRide(ride.id)}
                 >
                   Complete Ride
                 </button>
+
+                <button 
+                  className='mt-2 ml-2 bg-green-500 text-white px-3 py-1 rounded'
+                  onClick={() => fetchUserDetails(ride)}
+                >
+                  View User Details
+                </button>
+
+                {selectedRideId === ride.id && userDetails && (
+                  <div className='relative p-4 bg-gray-100 mt-4'>
+                    <button   
+                      className='absolute top-2 right-2 text-red-500 font-bold'
+                      onClick={hideUserDetails}
+                    >
+                      &#x2715; {/* This is the 'X' icon */}
+                    </button>
+
+                    <h3 className='text-lg font-bold'>User Details</h3>
+                    <img
+                      className='object-cover object-center h-32'
+                      src={userDetails.profilePicture || 'https://via.placeholder.com/400'}
+                      alt='Profile'
+                    />
+                    <div><strong>Name:</strong> {userDetails.names} {userDetails.surname}</div>
+                    <div><strong>Email:</strong> {userDetails.email}</div>
+                    <div><strong>Phone:</strong> {userDetails.phone}</div>
+                  </div>
+                )}
               </li>
             ))}
           </ul>
         )}
 
-        {/* Display trip history */}
-        <h2 className='text-2xl font-bold mt-8 mb-4'>My Accepted Rides</h2>
+        <h2 className='text-2xl font-bold mb-4'>My Trip History</h2>
         {loading ? (
-          <p>Loading trip history...</p>
+          <p className="text-center text-gray-500">Loading trip history...</p>
         ) : tripHistory.length === 0 ? (
-          <p>No trip history available.</p>
+          <p className="text-center text-gray-500">No trip history available.</p>
         ) : (
-          <ul>
+          <ul className="space-y-4">
             {tripHistory.map((trip, index) => (
-              <li key={index} className='border-b py-2'>
-                <div><strong>Source:</strong> {trip.source}</div>
-                <div><strong>Destination:</strong> {trip.destination}</div>
-                <div><strong>Distance:</strong> {trip.distance} km</div>
-                <div><strong>Price:</strong> R{trip.price}</div>
-                <div><strong>Date:</strong> {trip.movingDate}</div>
+              <li key={index} className="border-b py-2">
+                
+                <div className="text-lg"><strong>Source:</strong> {trip.source}</div>
+                <div className="text-lg"><strong>Destination:</strong> {trip.destination}</div>
+                <div className="text-lg"><strong>Distance:</strong> {trip.distance} km</div>
+                <div className="text-lg"><strong>Price:</strong> R{trip.price}</div>
+                <div className="text-lg"><strong>Date:</strong> {trip.movingDate}</div>
               </li>
             ))}
           </ul>
