@@ -5,6 +5,8 @@ import firebase from 'firebase/app';
 
 
 const DriverHome = () => {
+
+
   const [rideDetails, setRideDetails] = useState([]);
   const [rideAccepted, setRideAccepted] = useState(false);
   const [map, setMap] = useState(null);
@@ -13,6 +15,18 @@ const DriverHome = () => {
 
   const [selectedRideId, setSelectedRideId] = useState(null); // Tracks which container is clicked
   const user = auth.currentUser; // Get the current user
+
+
+
+  useEffect(() => {
+    const intervalTime = rideDetails.length > 0 ? 30000 : 10000; // 30s if ride available, 10s otherwise
+    const interval = setInterval(() => {
+      window.location.reload();
+    }, intervalTime);
+
+    // Cleanup interval on component unmount
+    return () => clearInterval(interval);
+  }, [rideDetails]);
   
 
   useEffect(() => {

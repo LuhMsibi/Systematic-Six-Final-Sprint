@@ -24,6 +24,24 @@ const PaymentSide = () => {
     googleMapsApiKey: 'AIzaSyCKqk4I-ZPHLGueUz17Xhl-oCz0MZ2YVx0' // Use your API key
   });
 
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (!driverDetails) {
+        window.location.reload();
+      }
+    }, 10000);
+
+    // Clear interval if driver details are present
+    if (driverDetails) {
+      clearInterval(interval);
+    }
+
+    // Cleanup interval on component unmount
+    return () => clearInterval(interval);
+  }, [driverDetails]);
+  
+
   // Retrieve distance from local storage
   useEffect(() => {
     const storedDistance = JSON.parse(localStorage.getItem('rideRequest'))?.distance;
@@ -133,15 +151,18 @@ const PaymentSide = () => {
           <p className='px-2'>Card</p>
         </div>
 
-        {distance !== null ? (
+        {driverDetails ? (
           <div>
             <h3 className='text-md font-semibold mb-2'>Distance from Driver:</h3>
-            <p className='text-lg'>The driver is approximately {distance.toFixed(2)} km away.</p>
+            <p className='text-lg'>The driver is approximately {distance?.toFixed(2)} km away.</p>
             <p className='text-lg'>Ride Code: {rideCode}</p>
           </div>
-        ) : (
+          ) : distance !== null ? (
+          <p>Waiting for a driver to accept your ride. . .</p>
+          ) : (
           <p>Distance information is not available.</p>
         )}
+
 
         {driverDetails && showDriverCard && (
           <div className='fixed inset-0 flex items-center justify-center z-50 mt-10'>
