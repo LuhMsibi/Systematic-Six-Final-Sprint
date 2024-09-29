@@ -27,7 +27,7 @@ const SignUpFormClient = () => {
           email: email
         }).then(() => {
           console.log("User information saved to Firestore");
-          navigate('../ClienComponents/ClientProfile');
+          navigate('/ClientProfile');
         }).catch(error => {
           console.error("Error adding user information to Firestore: ", error);
           alert("There was an error saving your information. Please try again.");

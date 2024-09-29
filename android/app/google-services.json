@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "697836715784",
+    "project_id": "pack-it-buddy-main",
+    "storage_bucket": "pack-it-buddy-main.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:697836715784:android:21b354ee971914d7fd36bd",
+        "android_client_info": {
+          "package_name": "com.example.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "697836715784-gq83hkh0tl56o10neug9ghjrti8g0u6u.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.app",
+            "certificate_hash": "1610bbe85f5488cd0f2bd925c8bead67e75c21c9"
+          }
+        },
+        {
+          "client_id": "697836715784-15oqe0df7h1ejilcg6f6udlbfv97k3j9.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD1UKFDact36Jt2wCLLcw2m3cZC2qG-yRQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "697836715784-15oqe0df7h1ejilcg6f6udlbfv97k3j9.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
