@@ -47,7 +47,38 @@ const DriverNav = () => {
             </div>
 
             <ul className="hidden md:flex">
-                {/* Add list items for larger screens here */}
+                <li className="relative group">
+                    <label
+                        className="px-4 cursor-pointer capitalize font-bold text-white hover:text-amber-400 hover:scale-105 duration-200"
+                    >
+                        <Link  className="hover:text-amber-400 px-4 cursor-pointer capitalize font-bold text-white hover:scale-105 duration-200"
+                        to="/DriverHistory">
+                        History
+                        </Link>
+                        
+                    </label>
+                   
+                </li>
+            
+
+                <li className="relative group">
+                    <Link
+                        className="hover:text-amber-400 px-4 cursor-pointer capitalize font-bold text-white hover:scale-105 duration-200"
+                        to="/DriverSupport"
+                    >
+                        Support
+                    </Link>
+                </li>
+
+                <li className="relative group">
+                    <Link
+                        className=" hover:text-amber-400 px-4 cursor-pointer capitalize font-bold text-white hover:scale-105 duration-200"
+                        to="/DriverReferrals"
+                    >
+                        Referrals
+                    </Link>
+                </li>
+        
             </ul>
 
             {/* Driver's Profile Picture */}

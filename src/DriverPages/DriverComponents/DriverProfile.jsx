@@ -24,7 +24,7 @@ const DriverProfile = () => {
                 .then((doc) => {
                     if (doc.exists) {
                         const profileData = doc.data();
-                        setName(profileData.firstName || "");
+                        setName(profileData.names || "");
                         setSurname(profileData.surname || "");
                         setEmail(profileData.email || "");
                         setPhone(profileData.phone || "");

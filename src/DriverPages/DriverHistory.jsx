@@ -144,10 +144,10 @@ const DriverHistory = () => {
                   placeholder='Enter Completion Code'
                   value={inputCodes[ride.id] || ''}
                   onChange={(e) => handleInputChange(e, ride.id)}
-                  className='border rounded p-1 mt-2'
+                  className=' rounded p-1 mt-2 border border-slate-200 mr-2 md:mr-5'
                 />
                 <button 
-                  className='mt-2 bg-blue-500 text-white px-3 py-1 rounded'
+                  className='mt-2 bg-blue-500 text-white px-3 py-1 rounded mr-5'
                   onClick={() => handleCompleteRide(ride.id)}
                 >
                   Complete Ride

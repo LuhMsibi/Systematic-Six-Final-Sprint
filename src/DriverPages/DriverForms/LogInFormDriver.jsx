@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { auth } from '../../../firebase'; // Import Firebase auth
+import { auth, googleAuthProvider } from '../../../firebase'; // Import Firebase auth
 import backtruck from '../DriverAssets/truck4.jpg';
 import { FaArrowLeft } from "react-icons/fa";
 
@@ -47,6 +47,19 @@ const LogInFormDriver = () => {
     }
   };
 
+  const signInWithGoogle = () => {
+    auth.signInWithPopup(googleAuthProvider)
+      .then((result) => {
+        const user = result.user;
+        console.log('Google sign-in user:', user);
+        navigate('/DriverHome'); // Redirect to homepage or another page after successful login
+      })
+      .catch((error) => {
+        console.error("Error signing in with Google: ", error);
+        alert("There was an error signing in with Google. Please try again.");
+      });
+  };
+
   return (
     <div className="flex h-screen">
       <div className="mb-4 flex justify-start">
@@ -59,6 +72,13 @@ const LogInFormDriver = () => {
           <div>
             <h1 className="py-4 text-[#131a4b] text-3xl font-bold text-center">Log In</h1>
           </div>
+          <button
+            className="w-full bg-[#131a4b] px-4 rounded-md text-white font-bold py-2"
+            onClick={signInWithGoogle}
+          >
+            Sign in with Google
+          </button>
+          <p className="text-center my-4">OR</p>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label className="font-medium text-gray-500">Email Address</label>

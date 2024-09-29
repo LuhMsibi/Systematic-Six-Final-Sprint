@@ -97,7 +97,7 @@ const DriverSupport = () => {
                 required
               ></textarea>
             </div>
-            <button type="submit" className="w-full p-2 bg-black text-white rounded-md text-lg hover:bg-gray-800 transition-colors duration-200">
+            <button type="submit" className="w-full p-2 bg-yellow-400 text-black rounded-md text-lg hover:bg-gray-800 transition-colors duration-200">
               Submit
             </button>
           </form>

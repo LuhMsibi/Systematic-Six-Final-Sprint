@@ -4,7 +4,9 @@ import { GoogleMap, Marker, useLoadScript } from '@react-google-maps/api';
 import io from 'socket.io-client';
 import { Link } from 'react-router-dom';
 import { IoArrowBack } from 'react-icons/io5';
-import { db, auth } from '../../../firebase'; // Adjust to your file structure
+import { db, auth } from '../../../firebase';
+import ClientNav from './ClientNav';
+
 
 const PaymentSide = () => {
   const [distance, setDistance] = useState(null);
@@ -116,9 +118,12 @@ const PaymentSide = () => {
 
   return (
     <div className='bg-gray-200 h-screen p-4'>
+      
       <Link to='/GetQuote'>
         <IoArrowBack />
       </Link>
+      <ClientNav />
+
 
       <h1 className='text-xl font-bold mb-4'>Payment and Tracking</h1>
       <div className='bg-white rounded-lg shadow-md p-4'>
@@ -163,7 +168,7 @@ const PaymentSide = () => {
                 />
               </div>
               <div className='text-center mt-2'>
-                <h2 className='font-semibold'>{driverDetails.firstName}</h2>
+                <h2 className='font-semibold'>{driverDetails.firstName} {driverDetails.surname}</h2>
                 <p className='text-gray-500'>{driverDetails.email}</p>
                 <p className='text-gray-500'>{driverDetails.phone}</p>
               </div>

@@ -47,7 +47,46 @@ const ClientNav = () => {
             </div>
 
             <ul className="hidden md:flex">
-                {/* Your existing list items for larger screens */}
+            <li className="relative group">
+                    <label
+                        className="px-4 cursor-pointer capitalize font-bold text-white hover:text-amber-400 hover:scale-105 duration-200"
+                    >
+                        <Link  className="hover:text-amber-400 px-4 cursor-pointer capitalize font-bold text-white hover:scale-105 duration-200"
+                        to="/ClientHistory">
+                         Trip History
+                        </Link>
+                        
+                    </label>
+                   
+                </li>
+            
+
+                <li className="relative group">
+                    <Link
+                        className="hover:text-amber-400 px-4 cursor-pointer capitalize font-bold text-white hover:scale-105 duration-200"
+                        to="/Deals"
+                    >
+                        Deals
+                    </Link>
+                </li>
+
+                <li className="relative group">
+                    <Link
+                        className=" hover:text-amber-400 px-4 cursor-pointer capitalize font-bold text-white hover:scale-105 duration-200"
+                        to="/Support"
+                    >
+                        Support
+                    </Link>
+                </li>
+
+                <li className="relative group">
+                    <Link
+                        className=" hover:text-amber-400 px-4 cursor-pointer capitalize font-bold text-white hover:scale-105 duration-200"
+                        to="/Referrals"
+                    >
+                        Referrals
+                    </Link>
+                </li>
             </ul>
 
             {/* Profile Picture Button */}

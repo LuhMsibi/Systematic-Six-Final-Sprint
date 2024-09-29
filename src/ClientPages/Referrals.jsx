@@ -30,7 +30,7 @@ const Referrals = () => {
               readOnly 
               className="w-full bg-gray-100 rounded border border-gray-300 text-base outline-none text-gray-700 py-1 px-3 leading-8"
             />
-            <button onClick={copyToClipboard} className="mt-2 bg-indigo-500 text-white px-3 py-1 rounded">Copy Link</button>
+            <button onClick={copyToClipboard} className="mt-2 bg-yellow-400 text-black px-3 py-1 rounded">Copy Link</button>
           </div>
 
         </div>

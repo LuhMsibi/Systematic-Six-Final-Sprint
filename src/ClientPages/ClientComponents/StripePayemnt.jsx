@@ -61,11 +61,14 @@ function PaymentSide() {
             const destination = localStorage.getItem('destination');
             const user = auth.currentUser; // Get the current user
             console.log('This is my ID>>>', user.uid);
+
+            const ourMoney = (0.15 * totalPrice).toFixed(2);
+            const finalAmount = (totalPrice - parseFloat(ourMoney)).toFixed(2);
     
             const rideRequest = {
                 source,
                 destination,
-                price: totalPrice,
+                price: finalAmount,  //Reduced Money
                 distance,
                 movingDate: formData.movingDate,
                 fullName: formData.fullName,
@@ -96,6 +99,7 @@ function PaymentSide() {
     return (
         <div className='flex justify-center items-center h-screen'>
             <div className='bg-slate-50 h-64 w-96 shadow-md py-2 rounded'>
+                <h2 className='font-bold px-2'>Total Price: R{localStorage.getItem('totalPrice')}</h2>
                 <h2 className="font-bold px-2 p-4">Payment Details</h2>
                 <form onSubmit={handleSubmit}>
                     <CardElement className='p-4' onChange={handleChange} />
