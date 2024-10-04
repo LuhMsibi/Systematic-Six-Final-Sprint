@@ -46,6 +46,19 @@ function App() {
         <Route path='/ForgotPassword' element={<ForgotPassword />} />
         <Route path='/DriverForgotPassword' element={<ForgotPasswordDriver />} />
 
+        <Route 
+          path='/BusinessMove' 
+          element={<PrivateRoute><BusinessMove /></PrivateRoute>} 
+        />
+        <Route 
+          path='/PackingService' 
+          element={<PrivateRoute><PackingServices /></PrivateRoute>} 
+        />
+        <Route 
+          path='/LocalMove' 
+          element={<LocalMove />} 
+        />
+
         {/* Protected Routes */}
         <Route 
           path='/DriverHome' 
@@ -111,18 +124,7 @@ function App() {
           path='/About' 
           element={<PrivateRoute><AboutPage /></PrivateRoute>} 
         />
-        <Route 
-          path='/BusinessMove' 
-          element={<PrivateRoute><BusinessMove /></PrivateRoute>} 
-        />
-        <Route 
-          path='/PackingService' 
-          element={<PrivateRoute><PackingServices /></PrivateRoute>} 
-        />
-        <Route 
-          path='/LocalMove' 
-          element={<PrivateRoute><LocalMove /></PrivateRoute>} 
-        />
+       
         <Route 
           path='/Paynow' 
           element={<PrivateRoute><StripePayemnt /></PrivateRoute>} 

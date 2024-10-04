@@ -60,9 +60,9 @@ const PaymentSide = () => {
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((currentUser) => {
       if (currentUser) {
-        setUser(currentUser); // Set user if authenticated
+        setUser(currentUser); 
       } else {
-        setUser(null); // Clear user if not authenticated
+        setUser(null); 
       }
     });
 

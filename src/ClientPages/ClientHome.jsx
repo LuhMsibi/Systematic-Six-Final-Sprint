@@ -1,18 +1,32 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import ClientNav from './ClientComponents/ClientNav';
+import { auth } from '../../firebase';
+
 
 
 const ClientHome = () => {
     const [modalIsOpen, setModalIsOpen] = useState(false);
     const [price, setPrice] = useState(null);
     const [distance, setDistance] = useState(null);
+    const navigate = useNavigate();
 
   
   
     let map, directionsService, directionsRenderer;
     let sourceAutoComplete, destinationAutoComplete;
   
+    useEffect(() => {
+      const unsubscribe = auth.onAuthStateChanged((user) => {
+        if (!user) {
+          navigate('/'); // Redirect to the login page if the user is not authenticated
+        }
+      });
+  
+      return () => unsubscribe();
+    }, [navigate]);
+    
+
     useEffect(() => {
       const loadScript = (url) => {
         const script = document.createElement('script');

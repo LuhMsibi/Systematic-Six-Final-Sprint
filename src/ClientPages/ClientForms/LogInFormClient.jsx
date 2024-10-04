@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { auth, googleAuthProvider } from '../../../firebase'; // Import Firebase auth and provider
+import { auth, googleAuthProvider, } from '../../../firebase';
 import backtruck from '../../assets/BackgroundImg/truck4.jpg';
 import { FaArrowLeft } from "react-icons/fa"
+
 
 
 const LogInFormClient = () => {
@@ -15,13 +16,16 @@ const LogInFormClient = () => {
 
   const signIn = e => {
     e.preventDefault();
-    auth.signInWithEmailAndPassword(email, password)
-      .then((userCredential) => {
-        const user = userCredential.user;
-        console.log('Logged in user:', user);
-        navigate('../ClientHome'); // Redirect to homepage or another page after successful login
+    auth.setPersistence('local')
+      .then(() => {
+        return auth.signInWithEmailAndPassword(email, password)
+          .then((userCredential) => {
+            const user = userCredential.user;
+            console.log('Logged in user:', user);
+            navigate('../ClientHome'); // Redirect to homepage or another page after successful login
+          });
       })
-      .catch(error => {
+      .catch((error) => {
         console.error("Login error: ", error);
         setErrors({ email: 'Invalid email or password' }); // Show error message
       });

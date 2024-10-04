@@ -13,7 +13,7 @@ const Home = () => {
   const steps = [
     {
       id: '1',
-      message: 'What is your name?',
+      message: 'Welcome to PackItBuddy! What is your name?',
       trigger: '2',
     },
     {
@@ -23,48 +23,100 @@ const Home = () => {
     },
     {
       id: '3',
-      message: 'Hi {previousValue}, nice to meet you!',
+      message: 'Hi {previousValue}, nice to meet you! How can I assist you today?',
       trigger: '4',
     },
     {
       id: '4',
-      message: 'How can I assist?',
+      message: 'Please choose an option:',
       trigger: '5',
     },
     {
       id: '5',
       options: [
         { value: 'local', label: 'Local Move', trigger: 'handleLocalMove' },
-        { value: 'distance', label: 'Distance Move', trigger: 'handleDistanceMove' },
+        { value: 'distance', label: 'Packing Service', trigger: 'handleDistanceMove' },
         { value: 'business', label: 'Business Move', trigger: 'handleBusinessMove' },
+        { value: 'faq', label: 'FAQs', trigger: 'showFAQs' },
+        { value: 'support', label: 'Customer Support', trigger: 'handleSupport' },
       ],
     },
-    
     {
       id: 'handleLocalMove',
-      message: 'Services > Local Move',
-      end: true, // Ensure this ends the conversation
-      handler: () => {
-        navigate('/');  // Redirect to the Local Move page
-      },
+      message: 'To access Local Move services, please go to the "Services" section and click on "Local Move".',
+      trigger: 'menuOptions',
     },
     {
       id: 'handleDistanceMove',
-      message: 'Redirecting to Distance Move...',
-      end: true, // Ensure this ends the conversation
-      handler: () => {
-        navigate('/');  // Redirect to the Distance Move page
-      },
+      message: 'To access Packing services, please go to the "Services" section and click on "Packing Service".',
+      trigger: 'menuOptions',
     },
     {
       id: 'handleBusinessMove',
-      message: 'Redirecting to Business Move...',
-      end: true, // Ensure this ends the conversation
-      handler: () => {
-        navigate('/');  // Redirect to the Business Move page
-      },
+      message: 'To access Business Move services, please go to the "Services" section and click on "Business Move".',
+      trigger: 'menuOptions',
+    },
+    {
+      id: 'handleSupport',
+      message: 'Our customer support is available 24/7. You can contact us at support@packitbuddy.com or call us at (123) 456-7890.',
+      trigger: 'menuOptions',
+    },
+    {
+      id: 'showFAQs',
+      message: 'Here are some frequently asked questions:',
+      trigger: 'faqOptions',
+    },
+    {
+      id: 'faqOptions',
+      options: [
+        { value: 'resetPassword', label: 'How do I reset my password?', trigger: 'faqResetPassword' },
+        { value: 'contactSupport', label: 'How can I contact customer service?', trigger: 'faqContactSupport' },
+        { value: 'backToMenu', label: 'Back to Menu', trigger: 'menuOptions' },
+      ],
+    },
+    {
+      id: 'faqResetPassword',
+      message: 'To reset your password go to your profle and scroll to the bottom and click "Change Password" and follow the steps',
+      trigger: 'faqFollowUp',
+    },
+    {
+      id: 'faqContactSupport',
+      message: 'You can contact customer service through the "Support" section in the PackItBuddy app or by filling out the contact form in the support section.',
+      trigger: 'faqFollowUp',
+    },
+    {
+      id: 'faqFollowUp',
+      message: 'Would you like to see another FAQ or return to the menu?',
+      trigger: 'faqFollowUpOptions',
+    },
+    {
+      id: 'faqFollowUpOptions',
+      options: [
+        { value: 'anotherFAQ', label: 'See Another FAQ', trigger: 'faqOptions' },
+        { value: 'menu', label: 'Return to Menu', trigger: 'menuOptions' },
+      ],
+    },
+    {
+      id: 'menuOptions',
+      message: 'Would you like to see the menu again or end the conversation?',
+      trigger: 'menuChoice',
+    },
+    {
+      id: 'menuChoice',
+      options: [
+        { value: 'showMenu', label: 'Show Menu Again', trigger: '4' },
+        { value: 'endConversation', label: 'End Conversation', trigger: 'end' },
+      ],
+    },
+    {
+      id: 'end',
+      message: 'Thank you for using PackItBuddy! Have a great day!',
+      end: true,
     },
   ];
+  
+  
+  
 
   return (
     <div className='max-w-6xl mx-auto px-4'>
