@@ -92,7 +92,8 @@ const LogInFormClient = () => {
               Log In
             </button>
           </form>
-          <div className="mt-4 text-center text-sm">
+          <p className='text-center mt-2 text-yellow-500 hover:underline'><Link to='/ForgotPassword'>Forgot Password ?</Link> </p>
+          <div className="mt-3 text-center text-sm">
             Don't have an account? <Link to="/SignUpFormClient" className="text-yellow-500 hover:underline">Sign up</Link>
           </div>
         </div>
