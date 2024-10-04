@@ -77,7 +77,8 @@ function PaymentSide() {
                 email: formData.email,
                 phone: formData.phone,
                 weight: formData.weight,
-                userId: user.uid // Store the requester's user ID
+                userId: user.uid, // Store the requester's user ID
+                packageDescription: formData.packageDescription
             };
     
             // Push the ride request to Firestore and get the document reference

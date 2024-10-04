@@ -246,18 +246,19 @@ const handleAcceptRide = async (ride) => {
                   <div className="text-gray-600 mb-2">★ 4.75</div>
                   <div className="text-gray-600 mb-2">Moving Date: {ride.movingDate || 'N/A'}</div>
                   <div className="text-gray-700 mb-2">
-                    <span>5 mins (1.0 mi) away</span>
-                    <br />
                     <span>{ride.source}</span>
                   </div>
                   <div className="text-gray-700 mb-2">
-                    <span>2 hr 44 min (97.3 mi) trip</span>
-                    <br />
                     <span>{ride.destination}</span>
                   </div>
                   <div className="text-gray-700 mb-2">
                     <span>Long trip (45+ min)</span>
                   </div>
+                  <div className='flex'>
+                    <span className='font-bold'>Description: </span>
+                    <span className='px-2'> {ride.packageDescription || 'N/A'} 
+                      </span>
+                    </div>
                   <button
                     onClick={() => handleAcceptRide(ride)}
                     className="px-4 block text-center bg-yellow-400 text-black py-3 rounded-lg text-lg"
