@@ -154,16 +154,9 @@ const ClientProfile = () => {
                 </div>
 
                 <div className="mb-4">
-                    <label className="block text-gray-700 text-sm font-bold mb-2">
-                        New Password
-                    </label>
-                    <input 
-                        type="password" 
-                        className="w-full p-2 border border-gray-300 rounded"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                    />
+                   <p className='text-center text-yellow-500 hover:underline'><Link to='/ResetPassword'>Change Password</Link></p>
                 </div>
+               
 
                 <div className="flex justify-between">
                     <button 

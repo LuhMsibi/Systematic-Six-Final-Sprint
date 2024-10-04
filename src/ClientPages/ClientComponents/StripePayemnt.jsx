@@ -3,6 +3,8 @@ import { loadStripe } from '@stripe/stripe-js';
 import { Elements, CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
 import { useNavigate } from 'react-router-dom';
 import { db, auth } from '../../../firebase'; // Make sure Firebase config is properly imported
+import paymentImg from '../ClientAssets/payment.jpg';
+
 
 const stripePromise = loadStripe('pk_test_51PAL9I09idQbuC9sxMCgf5Q2jxCpdQP288JpBwxo7WQEoMjoCgW8SZLV5Yz7zfGDpr7RL4L8HH9NDoCnkUsAeNij00d6wMXJPB'); // Replace with your publishable key
 
@@ -98,6 +100,7 @@ function PaymentSide() {
     };
 
     return (
+        
         <div className='flex justify-center items-center h-screen'>
             <div className='bg-slate-50 h-64 w-96 shadow-md py-2 rounded'>
                 <h2 className='font-bold px-2'>Total Price: R{localStorage.getItem('totalPrice')}</h2>
