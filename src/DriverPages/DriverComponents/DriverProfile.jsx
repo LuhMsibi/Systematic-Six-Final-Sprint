@@ -76,6 +76,16 @@ const DriverProfile = () => {
         }
     };
 
+    const handleLogout = () => {
+        auth.signOut().then(() => {
+            // Logout successful, navigate to login page
+            navigate('/');
+        }).catch((error) => {
+            console.error("Error logging out: ", error);
+            alert("There was an error logging you out. Please try again.");
+        });
+    };
+
     return (
         <div>
             <DriverNav />
@@ -174,11 +184,12 @@ const DriverProfile = () => {
                 </div>
 
                 <div className='text-center'>
-                    <label className='text-[#131a4b] font-bold text-xl'>
-                        <Link to='/'>
-                            Log Out
-                        </Link>
-                    </label>
+                <button 
+                        className='text-[#131a4b] font-bold text-xl'
+                        onClick={handleLogout}
+                    >
+                        Log Out
+                    </button>
                 </div>
             </div>
         </div>

@@ -161,24 +161,31 @@ const DriverHistory = () => {
                 </button>
 
                 {selectedRideId === ride.id && userDetails && (
-                  <div className='relative p-4 bg-gray-100 mt-4'>
-                    <button   
-                      className='absolute top-2 right-2 text-red-500 font-bold'
-                      onClick={hideUserDetails}
-                    >
-                      &#x2715;
-                    </button>
-
-                    <h3 className='text-lg font-bold'>User Details</h3>
-                    <img
-                      className='object-cover object-center h-32'
-                      src={userDetails.profilePicture || 'https://via.placeholder.com/400'}
-                      alt='Profile'
-                    />
-                    <div><strong>Name:</strong> {userDetails.names} {userDetails.surname}</div>
-                    <div><strong>Email:</strong> {userDetails.email}</div>
-                    <div><strong>Phone:</strong> {userDetails.phone}</div>
-                  </div>
+                 <div className='relative p-6 bg-white rounded-lg shadow-md mt-4'>
+                 <button   
+                   className='absolute top-2 right-2 text-red-500 text-xl font-bold transition-transform transform hover:scale-110'
+                   onClick={hideUserDetails}
+                 >
+                   &#x2715;
+                 </button>
+               
+                 <h3 className='text-xl font-bold mb-4 text-gray-800 text-center'>Client Details</h3>
+                 
+                 <div className='flex flex-col items-center mb-4'>
+                   <img
+                     className='object-cover object-center h-32 w-32 rounded-full border-2 border-gray-300 mb-2'
+                     src={userDetails.profilePicture || 'https://via.placeholder.com/400'}
+                     alt='Profile'
+                   />
+                   <div className='text-lg font-semibold text-gray-700'>{userDetails.names} {userDetails.surname}</div>
+                 </div>
+               
+                 <div className='text-gray-600'>
+                   <div className='mb-2'><strong>Email:</strong> {userDetails.email}</div>
+                   <div><strong>Phone:</strong> {userDetails.phone}</div>
+                 </div>
+               </div>
+               
                 )}
               </li>
             ))}
