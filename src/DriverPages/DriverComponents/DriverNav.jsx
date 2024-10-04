@@ -78,6 +78,15 @@ const DriverNav = () => {
                         Referrals
                     </Link>
                 </li>
+                <li className="relative group">
+                    <Link
+                        className=" hover:text-amber-400 px-4 cursor-pointer capitalize font-bold text-white hover:scale-105 duration-200"
+                        to="/Varifiction"
+                    >
+                        Verify
+                    </Link>
+                </li>
+
         
             </ul>
 
@@ -112,6 +121,9 @@ const DriverNav = () => {
                     </li>
                     <li className="py-2">
                         <Link to="/DriverReferrals" onClick={toggleNav}>Referrals</Link>
+                    </li>
+                    <li className="py-2">
+                        <Link to="/Varification" onClick={toggleNav}>Verify</Link>
                     </li>
                 </ul>
             </div>

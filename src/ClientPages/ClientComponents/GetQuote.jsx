@@ -11,24 +11,21 @@ const GetQuote = () => {
     fullName: '',
     email: '',
     phone: '',
-    movingDate: ''
+    movingDate: '',
+    packageDescription: '' // New package description field
   });
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
       if (user) {
         console.log("Logged-in user:", user);
-        // Use setUser or other state if needed
       } else {
         console.log("No user is logged in.");
       }
     });
   
-    // Cleanup listener on component unmount
     return () => unsubscribe();
   }, []);
-
-  
 
   const [totalPrice, setTotalPrice] = useState(250);
   const navigate = useNavigate();
@@ -89,8 +86,8 @@ const GetQuote = () => {
   };
 
   const isFormComplete = () => {
-    const { fullName, email, phone, movingDate } = formData;
-    return fullName && email && phone && movingDate;
+    const { fullName, email, phone, movingDate, packageDescription } = formData; // Add packageDescription check
+    return fullName && email && phone && movingDate && packageDescription; // Ensure package description is included
   };
 
   return (
@@ -158,6 +155,17 @@ const GetQuote = () => {
                 id="moving-date"
                 name="movingDate"
                 value={formData.movingDate}
+                onChange={handleChange}
+                className="w-full p-2 border border-gray-300 rounded-md text-base focus:border-black focus:outline-none"
+              />
+            </div>
+            <div className="mb-4">
+              <label htmlFor="package-description" className="block mb-2 font-medium">Package Description</label>
+              <textarea
+                id="package-description"
+                name="packageDescription"
+                placeholder="Enter package description"
+                value={formData.packageDescription}
                 onChange={handleChange}
                 className="w-full p-2 border border-gray-300 rounded-md text-base focus:border-black focus:outline-none"
               />
