@@ -18,7 +18,7 @@ import Deals from './ClientPages/Deals';
 import Support from './ClientPages/Support';
 import Referrals from './ClientPages/Referrals';
 import DriverSupport from './DriverPages/DriverSupport';
-import Varification from './DriverPages/Varification';
+import Varification from './DriverPages/Varification'
 import DriverReferrals from './DriverPages/DriverReferrals';
 import DriverProfile from './DriverPages/DriverComponents/DriverProfile';
 import ClientProfile from './ClientPages/ClientComponents/ClientProfile';

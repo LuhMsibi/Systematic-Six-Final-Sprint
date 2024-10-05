@@ -17,8 +17,35 @@ function PaymentSide() {
     const [succeeded, setSucceeded] = useState(false);
     const [processing, setProcessing] = useState(false);
     const [disabled, setDisabled] = useState(false);
+    const [dealTitle, setDealTitle] = useState('');
+    const [discountPrice_, setDiscountPrice_] = useState(null); 
+
+
 
     useEffect(() => {
+
+        const fetchDeal = async () => {
+            const user = auth.currentUser;
+            if (user) {
+                const dealsRef = db.collection('Deals');
+                const querySnapshot = await dealsRef.where('userId', '==', user.uid).get();
+
+                if (!querySnapshot.empty) {
+                    const dealDoc = querySnapshot.docs[0];
+                    setDealTitle(dealDoc.data().title); // Set the deal title if a match is found
+                    const discount_=(0.2 * localStorage.getItem('totalPrice')).toFixed(2);
+                    const discountPrice__ = (localStorage.getItem('totalPrice') - discount_).toFixed(2);
+                    setDiscountPrice_(discountPrice__);
+                } else {
+                    setDealTitle('');
+                }
+            }
+        };
+
+        fetchDeal();
+
+
+
         const totalPriceInCents = Math.round(parseFloat(localStorage.getItem('totalPrice')) * 100);
 
         fetch('http://localhost:4242/create-payment-intent', {
@@ -99,11 +126,15 @@ function PaymentSide() {
         setDisabled(e.empty);
     };
 
+   
+
     return (
         
         <div className='flex justify-center items-center h-screen'>
             <div className='bg-slate-50 h-64 w-96 shadow-md py-2 rounded'>
                 <h2 className='font-bold px-2'>Total Price: R{localStorage.getItem('totalPrice')}</h2>
+                {dealTitle && <h2 className='font-bold px-2 text-green-500'>{dealTitle} Applied</h2>}
+                {discountPrice_ && <h2 className='px-2'>Now: R{discountPrice_}</h2>}
                 <h2 className="font-bold px-2 p-4">Payment Details</h2>
                 <form onSubmit={handleSubmit}>
                     <CardElement className='p-4' onChange={handleChange} />

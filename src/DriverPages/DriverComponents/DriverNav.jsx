@@ -53,7 +53,7 @@ const DriverNav = () => {
                     >
                         <Link  className="hover:text-amber-400 px-4 cursor-pointer capitalize font-bold text-white hover:scale-105 duration-200"
                         to="/DriverHistory">
-                        History
+                        Trip History
                         </Link>
                         
                     </label>
@@ -81,7 +81,7 @@ const DriverNav = () => {
                 <li className="relative group">
                     <Link
                         className=" hover:text-amber-400 px-4 cursor-pointer capitalize font-bold text-white hover:scale-105 duration-200"
-                        to="/Varifiction"
+                        to="/Varification"
                     >
                         Verify
                     </Link>
