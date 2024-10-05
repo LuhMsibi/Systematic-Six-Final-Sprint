@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { auth, db } from '../../../firebase'; // Ensure you've imported Firebase auth and db
+import { auth, db } from '../../../firebase'; // 
 import DriverNav from './DriverNav';
 import { Link, useNavigate } from 'react-router-dom';
 

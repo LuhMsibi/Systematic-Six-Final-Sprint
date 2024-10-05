@@ -13,10 +13,32 @@ const DriverHome = () => {
   const [directionsRenderer, setDirectionsRenderer] = useState(null);
   const [directionsService, setDirectionsService] = useState(null);
 
-  const [selectedRideId, setSelectedRideId] = useState(null); // Tracks which container is clicked
-  const user = auth.currentUser; // Get the current user
+  const [selectedRideId, setSelectedRideId] = useState(null); 
+  const [isVerified, setIsVerified] = useState(null); 
+
+  const user = auth.currentUser;
 
 
+
+  // Check if driver is verified
+  useEffect(() => {
+    const checkDriverVerification = async () => {
+      if (user) {
+        try {
+          const driverRef = db.collection('driversDetails').doc(user.uid);
+          const driverDoc = await driverRef.get();
+          if (driverDoc.exists) {
+            const driverData = driverDoc.data();
+            setIsVerified(driverData.Verified || false); // Set verification status
+          }
+        } catch (error) {
+          console.error('Error fetching driver verification status:', error);
+        }
+      }
+    };
+
+    checkDriverVerification();
+  }, [user]);
 
   useEffect(() => {
     const intervalTime = rideDetails.length > 0 ? 30000 : 10000; // 30s if ride available, 10s otherwise
@@ -224,54 +246,52 @@ const handleAcceptRide = async (ride) => {
 
       <main className="flex flex-col items-center min-h-screen p-5 w-screen">
         <div id="map" className="h-64 w-full rounded-lg overflow-hidden shadow-sm mb-2"></div>
-        <div className="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {rideDetails.length > 0 ? (
-            rideDetails.map((ride, index) => {
-              const ourMoney = (0.15 * ride.price).toFixed(2);
-              const finalAmount = (ride.price - parseFloat(ourMoney)).toFixed(2);
 
-              return (
-                <div
-                  key={index}
-                  className={`bg-gray-50 rounded-lg  p-6 cursor-pointer ${
-                    selectedRideId === ride.id ? 'shadow-[rgba(0,0,0,0.16)_0px_1px_4px,_rgb(51,51,51)_0px_0px_0px_3px]' : 'shadow-lg'
-                  }`}
-                  onClick={() => handleTripClick(ride)} // Click to update the map
-                >
-                  <h3 className="text-2xl font-bold flex items-center mb-4">
-                    <span className="mr-2">🚚</span> Truck
-                  </h3>
-                  <div className="text-2xl font-bold mb-2">R{finalAmount}</div>
-                  <div>- 15%: R{ride.price}</div>
-                  <div className="text-gray-600 mb-2">★ 4.75</div>
-                  <div className="text-gray-600 mb-2">Moving Date: {ride.movingDate || 'N/A'}</div>
-                  <div className="text-gray-700 mb-2">
-                    <span>{ride.source}</span>
-                  </div>
-                  <div className="text-gray-700 mb-2">
-                    <span>{ride.destination}</span>
-                  </div>
-                  <div className="text-gray-700 mb-2">
-                    <span>Long trip (45+ min)</span>
-                  </div>
-                  <div className='flex'>
-                    <span className='font-bold'>Description: </span>
-                    <span className='px-2'> {ride.packageDescription || 'N/A'} 
-                      </span>
-                    </div>
-                  <button
-                    onClick={() => handleAcceptRide(ride)}
-                    className="px-4 block text-center bg-yellow-400 text-black py-3 rounded-lg text-lg"
+        {isVerified === null ? (
+          <p>Checking verification status...</p>
+        ) : isVerified === false ? (
+          <p className='text-red-400'>Driver not verified</p>
+        ) : (
+          <div className="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {rideDetails.length > 0 ? (
+              rideDetails.map((ride, index) => {
+                const ourMoney = (0.15 * ride.price).toFixed(2);
+                const finalAmount = (ride.price - parseFloat(ourMoney)).toFixed(2);
+
+                return (
+                  <div
+                    key={index}
+                    className={`bg-gray-50 rounded-lg p-6 cursor-pointer ${selectedRideId === ride.id ? 'shadow-[rgba(0,0,0,0.16)_0px_1px_4px,_rgb(51,51,51)_0px_0px_0px_3px]' : 'shadow-lg'}`}
+                    onClick={() => handleTripClick(ride)}
                   >
-                    Accept
-                  </button>
-                </div>
-              );
-            })
-          ) : (
-            <p>Loading ride details...</p>
-          )}
-        </div>
+                    <h3 className="text-2xl font-bold flex items-center mb-4">
+                      <span className="mr-2">🚚</span> Truck
+                    </h3>
+                    <div className="text-2xl font-bold mb-2">R{finalAmount}</div>
+                    <div>- 15%: R{ride.price}</div>
+                    <div className="text-gray-600 mb-2">★ 4.75</div>
+                    <div className="text-gray-600 mb-2">Moving Date: {ride.movingDate || 'N/A'}</div>
+                    <div className="text-gray-700 mb-2">{ride.source}</div>
+                    <div className="text-gray-700 mb-2">{ride.destination}</div>
+                    <div className="text-gray-700 mb-2">Long trip (45+ min)</div>
+                    <div className='flex'>
+                      <span className='font-bold'>Description: </span>
+                      <span className='px-2'> {ride.packageDescription || 'N/A'}</span>
+                    </div>
+                    <button
+                      onClick={() => handleAcceptRide(ride)}
+                      className="px-4 block text-center bg-yellow-400 text-black py-3 rounded-lg text-lg"
+                    >
+                      Accept
+                    </button>
+                  </div>
+                );
+              })
+            ) : (
+              <p>Loading ride details...</p>
+            )}
+          </div>
+        )}
       </main>
     </div>
   );

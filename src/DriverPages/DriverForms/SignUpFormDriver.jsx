@@ -49,7 +49,8 @@ const SignUpFormDriver = () => {
             firstName: formData.firstName,
             surname: formData.surname,
             phone: formData.phoneNumber,
-            email: formData.email
+            email: formData.email,
+            Verified: false,
           }).then(() => {
             console.log("Driver information saved to Firestore");
             navigate('/DriverProfile'); // Redirect to DriverHome after successful submission
@@ -77,7 +78,8 @@ const SignUpFormDriver = () => {
           firstName: user.displayName.split(' ')[0],
           surname: user.displayName.split(' ')[1] || '',
           phoneNumber: '', // You may want to add a method to collect this later
-          email: user.email
+          email: user.email,
+          Verified: false,
         }).then(() => {
           console.log("Driver information saved to Firestore");
           navigate('/DriverProfile');
