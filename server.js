@@ -28,6 +28,6 @@ app.post('/create-payment-intent', async (req, res) => {
 });
 
 // Start the server
-app.listen(4242, () => {
+{/*app.listen(4242, () => {
   console.log('Server is running on port 4242');
-});
+});*/}
